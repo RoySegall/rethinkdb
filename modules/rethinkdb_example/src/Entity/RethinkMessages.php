@@ -18,6 +18,9 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *   label = @Translation("RethinkDB messages"),
  *   base_table = "rethinkdb_messages",
  *   translatable = TRUE,
+ *   handlers = {
+ *     "storage" = "Drupal\rethinkdb\RethinkStorage"
+ *   },
  *   entity_keys = {
  *     "id" = "mid",
  *     "label" = "title",

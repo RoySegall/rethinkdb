@@ -28,7 +28,7 @@ class DefaultController extends ControllerBase {
     $message = RethinkMessages::load(1);
 
     if (!$message) {
-      RethinkMessages::create([
+      $message = RethinkMessages::create([
         'title' => 'foo',
         'uid' => 1,
       ])->save();
@@ -36,7 +36,7 @@ class DefaultController extends ControllerBase {
 
     return [
       '#type' => 'markup',
-      '#markup' => $message->get('title')->value,
+      '#markup' => $message,
     ];
   }
 

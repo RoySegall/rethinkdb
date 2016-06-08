@@ -4,6 +4,6 @@
  * @file rehinkdb.module
  */
 
-if (file_exists('')) {
-  require_once 'src/rethinkdb/autoload.php';
+if (file_exists(drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb')) {
+  require_once drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb/autoload.php';
 }
