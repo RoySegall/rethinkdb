@@ -1,0 +1,7 @@
+name: RethinkDB Example
+type: module
+description: Intergation example with RethinkDB
+core: 8.x
+package: RethinkDB
+dependencies:
+  - rethinkdb

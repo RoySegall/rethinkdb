@@ -1,0 +1,37 @@
+@charset "UTF-8";
+
+a {
+    color: #773333;
+}
+
+h1 {
+    font-family: Sans-Serif;
+    background-color: #e5b0b0;
+    padding: 0.7cm;
+}
+
+h2 {
+    margin-top: 2cm;
+    font-family: Sans-Serif;
+    background-color: #f0c0c0;
+    padding: 0.5cm;
+}
+
+h3 {
+    margin-top: 1cm;
+    font-family: Sans-Serif;
+    background-color: #f5e0e0;
+    padding: 0.1cm;
+}
+
+pre.syntax {
+    border: solid;
+    border-width: 1px;
+    border-color: #f5e0e0;
+    padding: 0.1cm;
+    color: #555555;
+}
+
+pre.example {
+    padding: 0.3cm;
+}

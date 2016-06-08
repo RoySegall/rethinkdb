@@ -1,0 +1,19 @@
+{
+  "name": "drupal/rethinkdb",
+  "type": "drupal-module",
+  "description": "Add integration with RethinkDB",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/rethinkdb",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/rethinkdb",
+    "source": "http://cgit.drupalcode.org/rethinkdb"
+  },
+  "require": {
+    "danielmewes/php-rql": "^2.3"
+  },
+  "config": {
+    "vendor-dir": "src/rethinkdb"
+  }
+}

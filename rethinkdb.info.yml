@@ -1,0 +1,5 @@
+name: RethinkDB
+type: module
+description: Add integration with RethinkDB
+core: 8.x
+package: RethinkDB

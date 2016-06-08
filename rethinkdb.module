@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * @file rehinkdb.module
+ */
+
+if (file_exists('')) {
+  require_once 'src/rethinkdb/autoload.php';
+}
