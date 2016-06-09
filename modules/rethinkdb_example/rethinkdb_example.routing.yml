@@ -3,6 +3,13 @@ rethinkdb_example.default_controller_index:
   path: '/rethinkdb_example/list'
   defaults:
     _controller: '\Drupal\rethinkdb_example\Controller\DefaultController::index'
-    _title: 'RethinkDB example messages'
+    _title: 'RethinkDB messages'
+  requirements:
+    _permission: 'access content'
+
+rethinkdb_example.message_create_form:
+  path: '/rethinkdb_example/message_create'
+  defaults:
+    _form: '\Drupal\rethinkdb_example\Form\MessageCreate'
   requirements:
     _permission: 'access content'

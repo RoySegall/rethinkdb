@@ -8,8 +8,9 @@
 namespace Drupal\rethinkdb_example\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Extension\ModuleHandler;
-use Drupal\rethinkdb_example\Entity\RethinkMessages;
+use Drupal\Core\Url;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class DefaultController.
@@ -17,25 +18,53 @@ use Drupal\rethinkdb_example\Entity\RethinkMessages;
  * @package Drupal\rethinkdb_example\Controller
  */
 class DefaultController extends ControllerBase {
+
   /**
-   * Index.
-   *
+   * @var PrivateTempStoreFactory
+   */
+  protected $tempStore;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(PrivateTempStoreFactory $temp_store) {
+    $this->tempStore = $temp_store;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('user.private_tempstore')
+    );
+  }
+
+  /**
    * @return string
-   *   Return Hello string.
+   *   Show the recent created document.
    */
   public function index() {
 
-    // Get the first message for testing.
-    $message = RethinkMessages::create([
-      'title' => 'foo',
-      'uid' => 1,
-    ])->save();
+    $rethink_storage = $this->tempStore->get('rethinkdb');
 
-    $results = $message->getArrayCopy();
+    if ($document_id = $rethink_storage->get('document_id')) {
+      // Since we displaying only the created row we need to delete it once we
+      // displayed it to the user.
+      $rethink_storage->delete('document_id');
+      $text = $this->t('You entered a new record to the DB - @record', ['@record' => $document_id]);
+    }
+    else {
+      $params = [
+        '@url' => Url::fromRoute('rethinkdb_example.message_create_form')->toString(),
+      ];
+
+      $text = $this->t('In order to show the last message you need to <a href="@url">create it</a>', $params);
+    }
 
     return [
       '#type' => 'markup',
-      '#markup' => t('You entered a new record to the DB - @record', ['@record' => implode($results['generated_keys'])]),
+      '#markup' => $text,
     ];
   }
 
