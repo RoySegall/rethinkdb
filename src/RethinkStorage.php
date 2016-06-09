@@ -145,24 +145,10 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
-   * Iterate over the object array keys and get the value.
-   *
-   * @param array $values
-   *   Array of the entity converted to array.
-   *
-   * @return array
-   *   Flat array of the values.
-   */
-  protected function getValues(array $values) {
-  }
-
-  /**
-   * Gets the name of the service for the query for this entity storage.
-   *
-   * @return string
-   *   The name of the service for the query for this entity storage.
+   * {@inheritdoc}
    */
   protected function getQueryServiceName() {
+    return 'entity.query.rethink_db';
   }
 
   /**
