@@ -8,6 +8,7 @@ namespace Drupal\rethinkdb;
 
 use Drupal\Core\Site\Settings;
 use r\Connection;
+use r\Queries\Tables\Table;
 
 class RethinkDB {
 
@@ -44,8 +45,30 @@ class RethinkDB {
     return $this;
   }
 
+  /**
+   * @param $table
+   *
+   * @return Table
+   */
+  public function getTable($table) {
+    return \r\table($table);
+  }
+
+  /**
+   * @param $table
+   */
   public function tableCreate($table) {
     \r\db('test')->tableCreate($table)->run($this->getConnection());
+  }
+
+  /**
+   * @param $table
+   * @param $values
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function insert($table, $values) {
+    return $this->getTable($table)->insert($values)->run($this->getConnection());
   }
 
 }

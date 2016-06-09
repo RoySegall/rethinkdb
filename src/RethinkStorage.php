@@ -69,6 +69,24 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
+   * Get the base table easilly.
+   *
+   * @return null|string
+   */
+  protected function getTableName() {
+    return $this->entityManager->getDefinition($this->entityTypeId)
+      ->getBaseTable();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onEntityTypeCreate(EntityTypeInterface $entity_type) {
+    // Creating the table in the RethinkDB DB.
+    $this->rethinkdb->tableCreate($this->getTableName());
+  }
+
+  /**
    * Performs storage-specific loading of entities.
    *
    * Override this method to add custom functionality directly after loading.
@@ -123,8 +141,7 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
       return $item->value;
     }, $entity->getFields());
 
-    $this->serializer->serialize($values, 'json');
-    $this->rethinkdb->tableCreate('a');
+    return $this->rethinkdb->insert($this->getTableName(), $values);
   }
 
   /**

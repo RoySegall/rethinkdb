@@ -8,6 +8,7 @@
 namespace Drupal\rethinkdb_example\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\rethinkdb_example\Entity\RethinkMessages;
 
 /**
@@ -25,18 +26,16 @@ class DefaultController extends ControllerBase {
   public function index() {
 
     // Get the first message for testing.
-    $message = RethinkMessages::load(1);
+    $message = RethinkMessages::create([
+      'title' => 'foo',
+      'uid' => 1,
+    ])->save();
 
-    if (!$message) {
-      $message = RethinkMessages::create([
-        'title' => 'foo',
-        'uid' => 1,
-      ])->save();
-    }
+    $results = $message->getArrayCopy();
 
     return [
       '#type' => 'markup',
-      '#markup' => $message,
+      '#markup' => t('You entered a new record to the DB - @record', ['@record' => implode($results['generated_keys'])]),
     ];
   }
 

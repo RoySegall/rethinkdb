@@ -7,3 +7,17 @@
 if (file_exists(drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb')) {
   require_once drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb/autoload.php';
 }
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function rethinkdb_entity_type_alter(array &$entity_types) {
+
+  foreach ($entity_types as $entity_type) {
+    if ($entity_type->get('rethink')) {
+      // The entity need to be rethink-ed.
+      $entity_types[$entity_type->id()]->setStorageClass('Drupal\rethinkdb\RethinkStorage');
+    }
+  }
+
+}
