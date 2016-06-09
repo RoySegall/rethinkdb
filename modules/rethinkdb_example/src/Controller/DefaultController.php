@@ -25,21 +25,17 @@ class DefaultController extends ControllerBase {
    */
   public function index() {
 
-//    // Get the first message for testing.
-//    $message = RethinkMessages::create([
-//      'title' => 'foo',
-//      'uid' => 1,
-//    ])->save();
-//
-//    $results = $message->getArrayCopy();
+    // Get the first message for testing.
+    $message = RethinkMessages::create([
+      'title' => 'foo',
+      'uid' => 1,
+    ])->save();
 
-    $r = \Drupal::getContainer()->get('rethinkdb');
-    $r->createDb();
-
+    $results = $message->getArrayCopy();
 
     return [
       '#type' => 'markup',
-//      '#markup' => t('You entered a new record to the DB - @record', ['@record' => implode($results['generated_keys'])]),
+      '#markup' => t('You entered a new record to the DB - @record', ['@record' => implode($results['generated_keys'])]),
     ];
   }
 

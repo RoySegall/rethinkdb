@@ -129,7 +129,10 @@ class RethinkDB {
   }
 
   /**
+   * Get the table object query-ready to use.
+   *
    * @param $table
+   *   The table name.
    *
    * @return Table
    */
@@ -138,8 +141,10 @@ class RethinkDB {
   }
 
   /**
-   * @param $table
+   * Creating a table.
    *
+   * @param $table
+   *   The table name.
    *
    * @return array|\ArrayObject|\DateTime|null|\r\Cursor
    */
@@ -149,13 +154,17 @@ class RethinkDB {
   }
 
   /**
+   * Insert a document into the DB.
+   *
    * @param $table
-   * @param $values
+   *   The table name.
+   * @param $document
+   *   The document to insert into the DB.
    *
    * @return array|\ArrayObject|\DateTime|null|\r\Cursor
    */
-  public function insert($table, $values) {
-    return $this->getTable($table)->insert($values)->run($this->getConnection());
+  public function insert($table, $document) {
+    return $this->getTable($table)->insert($document)->run($this->getConnection());
   }
 
 }
