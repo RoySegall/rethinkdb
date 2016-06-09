@@ -104,10 +104,12 @@ class RethinkDB {
    * @param $db
    *   Optional. The database name. If not provided the database from the
    *   rethinkdb settings will used.
+   * @param $delete_if_exists
+   *   Optional. Delete the DB if exists. Default to TRUE.
    *
    * @throws \Exception
    */
-  public function createDb($db = NULL) {
+  public function createDb($db = NULL, $delete_if_exists = TRUE) {
     if (!$db) {
       $db = $this->settings['database'];
     }
@@ -115,7 +117,12 @@ class RethinkDB {
     $list = \r\dbList()->run($this->getConnection());
 
     if (in_array($this->settings['database'], $list)) {
-      throw new \Exception("A database with the name {$db} already exists.");
+      if ($delete_if_exists) {
+        \r\dbDrop($db)->run($this->getConnection());
+      }
+      else {
+        throw new \Exception("A database with the name {$db} already exists.");
+      }
     }
 
     \r\dbCreate($db)->run($this->getConnection());

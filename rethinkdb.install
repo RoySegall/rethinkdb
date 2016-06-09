@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file rethinkdb.install
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function rethinkdb_requirements() {
+  /** @var \Drupal\Core\Site\Settings $settings */
+  $settings = \Drupal::getContainer()->get('settings');
+
+  if (!$settings->get('rethinkdb')) {
+    return [
+      'settings' => [
+        'title' => t('No rethinkDB settings'),
+        'severity' => REQUIREMENT_ERROR,
+        'value' => t('Missing'),
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function rethinkdb_install() {
+  // Install the DB in the rethinkdb server.
+  \Drupal::getContainer()->get('rethinkdb')->createDb();
+}
