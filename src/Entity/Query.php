@@ -20,6 +20,7 @@ class Query extends QueryBase implements QueryInterface {
     /** @var RethinkDB $storage */
     $rethinkdb = \Drupal::getContainer()->get('rethinkdb');
 
+    /** @var \r\Queries\Tables\Table $table */
     $table = \r\table($this->entityType->getBaseTable());
 
     // Get conditions.
@@ -27,7 +28,8 @@ class Query extends QueryBase implements QueryInterface {
     // Run over the items.
     $items = [];
     foreach ($table->run($rethinkdb->getConnection()) as $item) {
-      $items[] = $item->getArrayCopy();
+      $array_copy = $item->getArrayCopy();
+      $items[$array_copy['id']] = $array_copy;
     }
 
     return $items;

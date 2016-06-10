@@ -141,11 +141,7 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   returns SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
    */
   protected function doSave($id, EntityInterface $entity) {
-    $values = array_map(function($item) {
-      return $item->value;
-    }, $entity->getFields());
-
-    return $this->rethinkdb->insert($this->getTableName(), $values);
+    return $this->rethinkdb->insert($this->getTableName(), $entity->dynamicFields);
   }
 
   /**

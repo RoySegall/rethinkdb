@@ -103,10 +103,9 @@ class MessageCreate extends FormBase {
     $message = $this
       ->entityManager
       ->getStorage('rethinkdb_message')
-      ->create([
-        'title' => $form_state->getValue('title'),
-        'body' => $form_state->getValue('body'),
-      ])
+      ->create()
+      ->setDynamicField('title', $form_state->getValue('title'))
+      ->setDynamicField('body', $form_state->getValue('body'))
       ->save();
 
     $results = $message->getArrayCopy();

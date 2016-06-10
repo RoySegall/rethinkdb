@@ -29,5 +29,12 @@ use Drupal\Core\Entity\ContentEntityBase;
  */
 class RethinkMessages extends ContentEntityBase {
 
+  public $dynamicFields = [];
+
+  public function setDynamicField($key, $value) {
+    $this->dynamicFields[$key] = $value;
+    return $this;
+  }
+
 }
 

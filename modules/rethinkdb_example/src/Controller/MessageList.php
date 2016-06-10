@@ -26,10 +26,18 @@ class MessageList extends ControllerBase {
     $messages = \Drupal::entityQuery('rethinkdb_message')
       ->execute();
 
+    $list = [];
+    foreach($messages as $id => $message) {
+      $list[] = $this->t('@id: @title - @body', [
+        '@id' => $message['id'],
+        '@title' => $message['title'],
+        '@body' => $message['body']
+      ]);
+    }
 
     return [
-        '#type' => 'markup',
-        '#markup' => $this->t('Implement method: list')
+      '#theme' => 'item_list',
+      '#items' =>  $list,
     ];
   }
 
