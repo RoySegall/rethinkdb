@@ -86,6 +86,10 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     $this->rethinkdb->tableCreate($this->getTableName());
   }
 
+  public function getTable() {
+    return \r\table($this->getTableName());
+  }
+
   /**
    * Performs storage-specific loading of entities.
    *

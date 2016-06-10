@@ -23,7 +23,10 @@ class MessageList extends ControllerBase {
    *   Return Hello string.
    */
   public function MessageList() {
-    $messages = \Drupal::entityQuery('rethinkdb_message')->execute();
+    $messages = \Drupal::entityQuery('rethinkdb_message')
+      ->execute();
+
+
     return [
         '#type' => 'markup',
         '#markup' => $this->t('Implement method: list')
