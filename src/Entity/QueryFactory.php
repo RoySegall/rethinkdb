@@ -12,6 +12,11 @@ use Drupal\Core\Entity\Query\QueryFactoryInterface;
 
 class QueryFactory Implements QueryFactoryInterface {
 
+  /**
+   * @var array
+   */
+  protected $namespaces;
+
   public function __construct() {
     $this->namespaces = QueryBase::getNamespaces($this);
   }
