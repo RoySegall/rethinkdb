@@ -24,7 +24,6 @@ class MessageList extends ControllerBase {
    */
   public function MessageList() {
     $messages = \Drupal::entityQuery('rethinkdb_message')
-      ->condition('title', 't', 'contain')
       ->execute();
 
     $list = [];
