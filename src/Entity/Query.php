@@ -7,6 +7,7 @@
 
 namespace Drupal\rethinkdb\Entity;
 
+use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Entity\Query\QueryBase;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\rethinkdb\RethinkDB;
@@ -45,6 +46,7 @@ class Query extends QueryBase implements QueryInterface {
 
     return $this
       ->addConditions()
+      ->addOrderBy()
       ->addPager()
       ->getResults();
   }
@@ -85,6 +87,19 @@ class Query extends QueryBase implements QueryInterface {
   }
 
   /**
+   * Ordering the query by a given key.
+   *
+   * @return Query
+   */
+  protected function addOrderBy() {
+    foreach ($this->sort as $sort) {
+      $sort_object = $sort['direction'] == 'ASC' ? \r\Asc($sort['field']) : \r\Desc($sort['field']);
+      $this->table = $this->table->orderBy($sort_object);
+    }
+    return $this;
+  }
+
+  /**
    * Return the results of the query.
    *
    * @return array
@@ -92,6 +107,12 @@ class Query extends QueryBase implements QueryInterface {
   protected function getResults() {
     /** @var RethinkDB $storage */
     $rethinkdb = \Drupal::getContainer()->get('rethinkdb');
+
+    /** @var ContainerAwareEventDispatcher $dispatcher */
+    $dispatcher = \Drupal::service('event_dispatcher');
+
+    // Allow other modules to alter the query object.
+    $dispatcher->dispatch('rethinkdb.query_alter', $this->table);
 
     $items = [];
     foreach ($this->table->run($rethinkdb->getConnection()) as $item) {
