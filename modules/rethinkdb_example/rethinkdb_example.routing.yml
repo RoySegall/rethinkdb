@@ -1,6 +1,6 @@
 
-rethinkdb_example.default_controller_index:
-  path: '/rethinkdb_example/list'
+rethinkdb_example.creation_result:
+  path: '/rethinkdb_example/result'
   defaults:
     _controller: '\Drupal\rethinkdb_example\Controller\DefaultController::index'
     _title: 'RethinkDB messages'
@@ -11,5 +11,13 @@ rethinkdb_example.message_create_form:
   path: '/rethinkdb_example/message_create'
   defaults:
     _form: '\Drupal\rethinkdb_example\Form\MessageCreate'
+  requirements:
+    _permission: 'access content'
+
+rethinkdb_example.message_list:
+  path: '/rethinkdb_example/message_list'
+  defaults:
+    _controller: '\Drupal\rethinkdb_example\Controller\MessageList::MessageList'
+    _title: 'Message list'
   requirements:
     _permission: 'access content'

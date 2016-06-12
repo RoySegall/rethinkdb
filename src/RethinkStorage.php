@@ -14,15 +14,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
+use r\Queries\Tables\Table;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Serializer\Serializer;
 
 class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInterface {
-
-  /**
-   * @var Serializer
-   */
-  protected $serializer;
 
   /**
    * @var RethinkDB
@@ -42,14 +38,11 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   The cache backend to be used.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
-   * @param \Symfony\Component\Serializer\Serializer $serializer
-   *   The serializer manager.
    * @param RethinkDB $rethinkdb
    *   The rethinkDB service.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, Serializer $serializer, RethinkDB $rethinkdb) {
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, RethinkDB $rethinkdb) {
     parent::__construct($entity_type, $database, $entity_manager, $cache, $language_manager);
-    $this->serializer = $serializer;
     $this->rethinkdb = $rethinkdb;
   }
 
@@ -63,9 +56,18 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
       $container->get('entity.manager'),
       $container->get('cache.entity'),
       $container->get('language_manager'),
-      $container->get('serializer'),
       $container->get('rethinkdb')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function create(array $values = array()) {
+
+    /** @var AbstractRethinkDbEntity $entity */
+    $entity = parent::create($values);
+    return $entity->setDynamicFields($values);
   }
 
   /**
@@ -84,6 +86,15 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   public function onEntityTypeCreate(EntityTypeInterface $entity_type) {
     // Creating the table in the RethinkDB DB.
     $this->rethinkdb->tableCreate($this->getTableName());
+  }
+
+  /**
+   * Get the table object.
+   *
+   * @return Table
+   */
+  public function getTable() {
+    return \r\table($this->getTableName());
   }
 
   /**
@@ -137,32 +148,14 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   returns SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
    */
   protected function doSave($id, EntityInterface $entity) {
-    $values = array_map(function($item) {
-      return $item->value;
-    }, $entity->getFields());
-
-    return $this->rethinkdb->insert($this->getTableName(), $values);
+    return $this->rethinkdb->insert($this->getTableName(), $entity->getDynamicFields())->getArrayCopy();
   }
 
   /**
-   * Iterate over the object array keys and get the value.
-   *
-   * @param array $values
-   *   Array of the entity converted to array.
-   *
-   * @return array
-   *   Flat array of the values.
-   */
-  protected function getValues(array $values) {
-  }
-
-  /**
-   * Gets the name of the service for the query for this entity storage.
-   *
-   * @return string
-   *   The name of the service for the query for this entity storage.
+   * {@inheritdoc}
    */
   protected function getQueryServiceName() {
+    return 'entity.query.rethink_db';
   }
 
   /**

@@ -6,7 +6,7 @@
 
 namespace Drupal\rethinkdb_example\Entity;
 
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
 
 /**
  * Defines the node entity class.
@@ -15,19 +15,12 @@ use Drupal\Core\Entity\ContentEntityBase;
  *   id = "rethinkdb_message",
  *   label = @Translation("RethinkDB messages"),
  *   base_table = "rethinkdb_messages",
- *   translatable = TRUE,
+ *   translatable = FALSE,
  *   rethink = TRUE,
- *   entity_keys = {
- *     "id" = "mid",
- *     "label" = "title",
- *     "langcode" = "langcode",
- *     "uuid" = "uuid",
- *     "status" = "status",
- *     "uid" = "uid",
- *   },
+ *   entity_keys = {}
  * )
  */
-class RethinkMessages extends ContentEntityBase {
+class RethinkMessages extends AbstractRethinkDbEntity {
 
 }
 
