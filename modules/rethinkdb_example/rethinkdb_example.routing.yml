@@ -1,6 +1,6 @@
 
-rethinkdb_example.default_controller_index:
-  path: '/rethinkdb_example/list'
+rethinkdb_example.creation_result:
+  path: '/rethinkdb_example/result'
   defaults:
     _controller: '\Drupal\rethinkdb_example\Controller\DefaultController::index'
     _title: 'RethinkDB messages'

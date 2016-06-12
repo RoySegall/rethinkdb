@@ -14,6 +14,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
+use r\Queries\Tables\Table;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Serializer;
 
@@ -69,6 +71,16 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function create(array $values = array()) {
+
+    /** @var AbstractRethinkDbEntity $entity */
+    $entity = parent::create($values);
+    return $entity->setDynamicFields($values);
+  }
+
+  /**
    * Get the base table easilly.
    *
    * @return null|string
@@ -86,6 +98,11 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     $this->rethinkdb->tableCreate($this->getTableName());
   }
 
+  /**
+   * Get the table object.
+   *
+   * @return Table
+   */
   public function getTable() {
     return \r\table($this->getTableName());
   }
@@ -141,7 +158,7 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   returns SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
    */
   protected function doSave($id, EntityInterface $entity) {
-    return $this->rethinkdb->insert($this->getTableName(), $entity->dynamicFields);
+    return $this->rethinkdb->insert($this->getTableName(), $entity->getDynamicFields())->getArrayCopy();
   }
 
   /**

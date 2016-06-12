@@ -28,7 +28,7 @@ class Query extends QueryBase implements QueryInterface {
     '>=' => 'ge',
     '<' => 'lt',
     '<=' => 'le',
-    'contain' => 'match',
+    'CONTAINS' => 'match',
   ];
 
   /**
@@ -107,12 +107,6 @@ class Query extends QueryBase implements QueryInterface {
   protected function getResults() {
     /** @var RethinkDB $storage */
     $rethinkdb = \Drupal::getContainer()->get('rethinkdb');
-
-    /** @var ContainerAwareEventDispatcher $dispatcher */
-    $dispatcher = \Drupal::service('event_dispatcher');
-
-    // Allow other modules to alter the query object.
-    $dispatcher->dispatch('rethinkdb.query_alter', $this->table);
 
     $items = [];
     foreach ($this->table->run($rethinkdb->getConnection()) as $item) {

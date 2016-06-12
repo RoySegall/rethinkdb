@@ -100,20 +100,19 @@ class MessageCreate extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $message = $this
+    $results = $this
       ->entityManager
       ->getStorage('rethinkdb_message')
-      ->create()
-      ->setDynamicField('title', $form_state->getValue('title'))
-      ->setDynamicField('body', $form_state->getValue('body'))
+      ->create([
+        'title' => $form_state->getValue('title'),
+        'body' => $form_state->getValue('body'),
+      ])
       ->save();
-
-    $results = $message->getArrayCopy();
 
     $this->tempStore->get('rethinkdb')->set('document_id', implode($results['generated_keys']));
 
     drupal_set_message($this->t('The message created successfully.'));
-    $form_state->setRedirect('rethinkdb_example.default_controller_index');
+    $form_state->setRedirect('rethinkdb_example.creation_result');
   }
 
 }
