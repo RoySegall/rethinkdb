@@ -14,7 +14,7 @@ rethinkdb_example.message_create_form:
   requirements:
     _permission: 'access content'
 
-rethinkdb_example.message_list_list:
+rethinkdb_example.message_list:
   path: '/rethinkdb_example/message_list'
   defaults:
     _controller: '\Drupal\rethinkdb_example\Controller\MessageList::MessageList'
