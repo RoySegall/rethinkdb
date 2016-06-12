@@ -23,7 +23,9 @@ class MessageList extends ControllerBase {
    *   Return Hello string.
    */
   public function MessageList() {
+    // todo check contains.
     $messages = \Drupal::entityQuery('rethinkdb_message')
+      ->condition('title', 'foo')
       ->execute();
 
     $list = [];

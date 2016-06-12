@@ -13,6 +13,16 @@ use Drupal\rethinkdb\RethinkDB;
 
 class Query extends QueryBase implements QueryInterface {
 
+  protected $filters = [
+    '=' => 'eq',
+    '!=' => 'ne',
+    '>' => 'gt',
+    '>=' => 'ge',
+    '<' => 'lt',
+    '<=' => 'le',
+    'contains' => 'contains',
+  ];
+
   /**
    * {@inheritdoc}
    */
@@ -24,6 +34,10 @@ class Query extends QueryBase implements QueryInterface {
     $table = \r\table($this->entityType->getBaseTable());
 
     // Get conditions.
+    foreach ($this->condition->conditions() as $condition) {
+      $operator = !empty($condition['operator']) ? $condition['operator'] : '=';
+      $table = $table->filter(\r\row($condition['field'])->{$this->filters[$operator]}($condition['value']));
+    }
 
     // Run over the items.
     $items = [];
