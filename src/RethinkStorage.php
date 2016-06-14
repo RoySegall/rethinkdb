@@ -98,21 +98,28 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
-   * Performs storage-specific loading of entities.
-   *
-   * Override this method to add custom functionality directly after loading.
-   * This is always called, while self::postLoad() is only called when there are
-   * actual results.
-   *
-   * @param array|null $ids
-   *   (optional) An array of entity IDs, or NULL to load all entities.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   *   Associative array of entities, keyed on the entity ID.
+   * {@inheritdoc}
+   */
+  public function loadMultiple(array $ids = NULL) {
+    // todo: cache.
+    return $this->doLoadMultiple($ids);
+  }
+
+  /**
+   * {@inheritdoc}
    */
   protected function doLoadMultiple(array $ids = NULL) {
     $documents = $this->rethinkdb->getAll($this->getTableName(), $ids);
-    dpm($documents);
+
+    $storage = $this->entityManager->getStorage($this->entityType->id());
+
+    $results = [];
+    foreach ($documents as $document) {
+      $array_copy = $document->getArrayCopy();
+      $results[$array_copy['id']] = $storage->create($array_copy);
+    }
+
+    return $results;
   }
 
   /**

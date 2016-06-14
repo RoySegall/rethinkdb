@@ -178,7 +178,7 @@ class RethinkDB {
    * @return \r\Queries\Selecting\GetAll
    */
   public function getAll($table_name, array $ids) {
-    return $this->getTable($table_name)->getAll($ids)->run($this->getConnection());
+    return $this->getTable($table_name)->getAll(\r\args($ids))->run($this->getConnection())->toArray();
   }
 
 }
