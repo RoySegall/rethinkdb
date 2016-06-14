@@ -67,7 +67,7 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
 
     /** @var AbstractRethinkDbEntity $entity */
     $entity = parent::create($values);
-    return $entity->setDynamicFields($values);
+    return $entity->setValues($values);
   }
 
   /**
@@ -157,7 +157,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   returns SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
    */
   protected function doSave($id, EntityInterface $entity) {
-    return $this->rethinkdb->insert($this->getTableName(), $entity->getDynamicFields())->getArrayCopy();
+    $method = $entity->id() ? 'update' : 'insert';
+    return $this->rethinkdb->{$method}($this->getTableName(), $entity->getValues())->getArrayCopy();
   }
 
   /**

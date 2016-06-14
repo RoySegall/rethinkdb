@@ -16,15 +16,10 @@ use Drupal\Core\Entity\ContentEntityBase;
 abstract class AbstractRethinkDbEntity extends ContentEntityBase {
 
   /**
-   * @var array
-   */
-  protected $dynamicFields = [];
-
-  /**
    * @return array
    */
-  public function getDynamicFields() {
-    return $this->dynamicFields;
+  public function getValues() {
+    return $this->values;
   }
 
   /**
@@ -32,8 +27,8 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
    *
    * @return $this
    */
-  public function setDynamicFields($dynamicFields) {
-    $this->dynamicFields = $dynamicFields;
+  public function setValues($dynamicFields) {
+    $this->values = $dynamicFields;
 
     return $this;
   }
@@ -49,8 +44,29 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
    * @return $this
    */
   public function setDynamicField($key, $value) {
-    $this->dynamicFields[$key] = $value;
+    $this->values[$key] = $value;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function get($field) {
+    return $this->values[$field];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function set($name, $value, $notify = TRUE) {
+    $this->values[$name] = $value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function id() {
+    return !empty($this->values['id']) ? $this->values['id'] : NULL;
   }
 
 }

@@ -159,7 +159,7 @@ class RethinkDB {
    * @param $table
    *   The table name.
    * @param $document
-   *   The document to insert into the DB.
+   *   The document object.
    *
    * @return array|\ArrayObject|\DateTime|null|\r\Cursor
    */
@@ -179,6 +179,20 @@ class RethinkDB {
    */
   public function getAll($table_name, array $ids) {
     return $this->getTable($table_name)->getAll(\r\args($ids))->run($this->getConnection())->toArray();
+  }
+
+  /**
+   * Update a document in the DB.
+   *
+   * @param $table
+   *   The table name.
+   * @param $document
+   *   The document object.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function update($table, $document) {
+    return $this->getTable($table)->update($document)->run($this->getConnection());
   }
 
 }
