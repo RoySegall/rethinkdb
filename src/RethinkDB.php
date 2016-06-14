@@ -167,4 +167,18 @@ class RethinkDB {
     return $this->getTable($table)->insert($document)->run($this->getConnection());
   }
 
+  /**
+   * Load multiple items from the DB.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   Array of documents IDs.
+   *
+   * @return \r\Queries\Selecting\GetAll
+   */
+  public function getAll($table_name, array $ids) {
+    return $this->getTable($table_name)->getAll($ids)->run($this->getConnection());
+  }
+
 }

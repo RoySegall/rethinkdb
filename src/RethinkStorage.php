@@ -111,6 +111,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   Associative array of entities, keyed on the entity ID.
    */
   protected function doLoadMultiple(array $ids = NULL) {
+    $documents = $this->rethinkdb->getAll($this->getTableName(), $ids);
+    dpm($documents);
   }
 
   /**
