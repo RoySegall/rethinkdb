@@ -100,8 +100,13 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    * {@inheritdoc}
    */
   public function loadMultiple(array $ids = NULL) {
-    // todo: cache.
-    return $this->doLoadMultiple($ids);
+    if ($entities = $this->getFromStaticCache($ids)) {
+      return $entities;
+    }
+
+    $entities = $this->doLoadMultiple($ids);
+    $this->setStaticCache($entities);
+    return $entities;
   }
 
   /**
