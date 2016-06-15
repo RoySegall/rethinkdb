@@ -195,4 +195,8 @@ class RethinkDB {
     return $this->getTable($table)->update($document)->run($this->getConnection());
   }
 
+  public function deleteAll($table, $ids) {
+    return $this->getTable($table)->getAll(\r\args($ids))->delete()->run($this->getConnection());
+  }
+
 }

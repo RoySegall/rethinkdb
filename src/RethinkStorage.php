@@ -64,7 +64,6 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    * {@inheritdoc}
    */
   public function create(array $values = array()) {
-
     /** @var AbstractRethinkDbEntity $entity */
     $entity = parent::create($values);
     return $entity->setValues($values);
@@ -142,6 +141,18 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   An array of entity objects to delete.
    */
   protected function doDelete($entities) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(array $entities) {
+    $ids = [];
+    foreach ($entities as $entity) {
+      $ids[] = $entity->id();
+    }
+
+    return $this->rethinkdb->deleteAll($this->getTable(), $ids);
   }
 
   /**
