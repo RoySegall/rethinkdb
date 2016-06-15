@@ -69,6 +69,9 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
     return !empty($this->values['id']) ? $this->values['id'] : NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function delete() {
     $this->entityTypeManager()->getStorage($this->entityTypeId)->delete([$this]);
   }

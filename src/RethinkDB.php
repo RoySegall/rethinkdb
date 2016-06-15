@@ -178,7 +178,35 @@ class RethinkDB {
    * @return \r\Queries\Selecting\GetAll
    */
   public function getAll($table_name, array $ids) {
-    return $this->getTable($table_name)->getAll(\r\args($ids))->run($this->getConnection())->toArray();
+    return $this->getAllWrapper($table_name, $ids)->run($this->getConnection())->toArray();
+  }
+
+  /**
+   * Deleting multiple documents from table.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   List of IDs.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function deleteAll($table_name, array $ids) {
+    return $this->getAllWrapper($table_name, $ids)->delete()->run($this->getConnection());
+  }
+
+  /**
+   * Wrapping the get all logic.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   List of IDs.
+   *
+   * @return \r\Queries\Selecting\GetAll
+   */
+  protected function getAllWrapper($table_name, array $ids) {
+    return $this->getTable($table_name)->getAll(\r\args($ids));
   }
 
   /**
@@ -193,20 +221,6 @@ class RethinkDB {
    */
   public function update($table, $document) {
     return $this->getTable($table)->update($document)->run($this->getConnection());
-  }
-
-  /**
-   * Deleting multiple documents from table.
-   *
-   * @param $table_name
-   *   The table name.
-   * @param array $ids
-   *   List of IDs.
-   *
-   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
-   */
-  public function deleteAll($table_name, array $ids) {
-    return $this->getTable($table_name)->getAll(\r\args($ids))->delete()->run($this->getConnection());
   }
 
 }
