@@ -35,12 +35,14 @@ class RethinkDB {
    *   settings.php file.
    */
   public function __construct(Settings $settings) {
-    $info = $settings->get('rethinkdb') + [
+    $info = $settings->get('rethinkdb', [
       'host' => 'localhsot',
       'port' => '28015',
+      'database' => 'drupal',
       'apiKey' => NULL,
       'timeout' => NULL,
-    ];
+    ]);
+
     $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
     $this->setSettings($info);
   }
