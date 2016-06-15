@@ -195,8 +195,18 @@ class RethinkDB {
     return $this->getTable($table)->update($document)->run($this->getConnection());
   }
 
-  public function deleteAll($table, $ids) {
-    return $this->getTable($table)->getAll(\r\args($ids))->delete()->run($this->getConnection());
+  /**
+   * Deleting multiple documents from table.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   List of IDs.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function deleteAll($table_name, array $ids) {
+    return $this->getTable($table_name)->getAll(\r\args($ids))->delete()->run($this->getConnection());
   }
 
 }
