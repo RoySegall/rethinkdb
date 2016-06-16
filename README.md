@@ -19,8 +19,15 @@ $settings['rethinkdb'] = array(
 );
 
 ```
+# CRUD operations:
+## Creating
+## Loading
+## Updating
+## Deleting
 
-## Integration
+# Query
+
+## Writing you custom entity
 You can look in the `rethinkdb_example` module on how to set up an entity,
 using the CRUD API or query against the RethinkDB database.
 
