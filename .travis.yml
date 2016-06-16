@@ -1,10 +1,12 @@
 language: php
 
-php: 5.6
+php:
+  - 5.6
+  - 5.7
 
-env: DRUPAL_CORE=8.1.x
-#  - DRUPAL_CORE=8.0.x
-#  - DRUPAL_CORE=8.1.x
+env:
+  - DRUPAL_CORE=8.0.x
+  - DRUPAL_CORE=8.1.x
 
 mysql:
   database: rethinkdb
