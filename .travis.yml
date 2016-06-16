@@ -19,6 +19,12 @@ before_script:
   - sudo apt-get install rethinkdb
   - rethinkdb > /dev/null &
 
+  # Installing composer
+  - curl -sS https://getcomposer.org/installer | php
+  - mv composer.phar /usr/local/bin/composer
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer global require drush/drush:dev-master
+
   # Remove Xdebug as we don't need it and it causes "PHP Fatal error: Maximum
   # function nesting level of '256' reached."
   # We also don't care if that file exists or not on PHP 7.
