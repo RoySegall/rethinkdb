@@ -4,10 +4,6 @@
  * @file rehinkdb.module
  */
 
-if (file_exists(drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb')) {
-  require_once drupal_get_path('module', 'rethinkdb') . '/src/rethinkdb/autoload.php';
-}
-
 /**
  * Implements hook_entity_type_alter().
  */

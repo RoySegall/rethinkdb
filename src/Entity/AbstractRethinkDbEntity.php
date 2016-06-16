@@ -6,6 +6,7 @@
 namespace Drupal\rethinkdb\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Wrapping the base content entity class. This is used when we need to add
@@ -16,15 +17,10 @@ use Drupal\Core\Entity\ContentEntityBase;
 abstract class AbstractRethinkDbEntity extends ContentEntityBase {
 
   /**
-   * @var array
-   */
-  protected $dynamicFields = [];
-
-  /**
    * @return array
    */
-  public function getDynamicFields() {
-    return $this->dynamicFields;
+  public function getValues() {
+    return $this->values;
   }
 
   /**
@@ -32,25 +28,43 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
    *
    * @return $this
    */
-  public function setDynamicFields($dynamicFields) {
-    $this->dynamicFields = $dynamicFields;
+  public function setValues($dynamicFields) {
+    $this->values = $dynamicFields;
 
     return $this;
   }
 
   /**
-   * Adding a dynamic field on the fly.
-   *
-   * @param $key
-   *   The name of the field.
-   * @param $value
-   *   The value of the field.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setDynamicField($key, $value) {
-    $this->dynamicFields[$key] = $value;
+  public function get($field) {
+    return $this->values[$field];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function set($name, $value, $notify = TRUE) {
+    $this->values[$name] = $value;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function id() {
+    return !empty($this->values['id']) ? $this->values['id'] : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete() {
+    $this->entityTypeManager()->getStorage($this->entityTypeId)->delete([$this]);
+  }
+
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    return [];
   }
 
 }

@@ -35,12 +35,14 @@ class RethinkDB {
    *   settings.php file.
    */
   public function __construct(Settings $settings) {
-    $info = $settings->get('rethinkdb') + [
-      'host' => 'localhsot',
+    $info = $settings->get('rethinkdb', [
+      'host' => 'localhost',
       'port' => '28015',
+      'database' => 'drupal',
       'apiKey' => NULL,
       'timeout' => NULL,
-    ];
+    ]);
+
     $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
     $this->setSettings($info);
   }
@@ -108,6 +110,8 @@ class RethinkDB {
    *   Optional. Delete the DB if exists. Default to TRUE.
    *
    * @throws \Exception
+   *
+   * @return RethinkDB
    */
   public function createDb($db = NULL, $delete_if_exists = TRUE) {
     if (!$db) {
@@ -126,6 +130,8 @@ class RethinkDB {
     }
 
     \r\dbCreate($db)->run($this->getConnection());
+
+    return $this;
   }
 
   /**
@@ -159,12 +165,68 @@ class RethinkDB {
    * @param $table
    *   The table name.
    * @param $document
-   *   The document to insert into the DB.
+   *   The document object.
    *
    * @return array|\ArrayObject|\DateTime|null|\r\Cursor
    */
   public function insert($table, $document) {
     return $this->getTable($table)->insert($document)->run($this->getConnection());
+  }
+
+  /**
+   * Load multiple items from the DB.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   Array of documents IDs.
+   *
+   * @return \r\Queries\Selecting\GetAll
+   */
+  public function getAll($table_name, array $ids) {
+    return $this->getAllWrapper($table_name, $ids)->run($this->getConnection())->toArray();
+  }
+
+  /**
+   * Deleting multiple documents from table.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   List of IDs.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function deleteAll($table_name, array $ids) {
+    return $this->getAllWrapper($table_name, $ids)->delete()->run($this->getConnection());
+  }
+
+  /**
+   * Wrapping the get all logic.
+   *
+   * @param $table_name
+   *   The table name.
+   * @param array $ids
+   *   List of IDs.
+   *
+   * @return \r\Queries\Selecting\GetAll
+   */
+  protected function getAllWrapper($table_name, array $ids) {
+    return $this->getTable($table_name)->getAll(\r\args($ids));
+  }
+
+  /**
+   * Update a document in the DB.
+   *
+   * @param $table
+   *   The table name.
+   * @param $document
+   *   The document object.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function update($table, $document) {
+    return $this->getTable($table)->update($document)->run($this->getConnection());
   }
 
 }

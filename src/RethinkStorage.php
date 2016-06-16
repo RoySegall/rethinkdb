@@ -64,10 +64,9 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    * {@inheritdoc}
    */
   public function create(array $values = array()) {
-
     /** @var AbstractRethinkDbEntity $entity */
     $entity = parent::create($values);
-    return $entity->setDynamicFields($values);
+    return $entity->setValues($values);
   }
 
   /**
@@ -98,19 +97,33 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
-   * Performs storage-specific loading of entities.
-   *
-   * Override this method to add custom functionality directly after loading.
-   * This is always called, while self::postLoad() is only called when there are
-   * actual results.
-   *
-   * @param array|null $ids
-   *   (optional) An array of entity IDs, or NULL to load all entities.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   *   Associative array of entities, keyed on the entity ID.
+   * {@inheritdoc}
+   */
+  public function loadMultiple(array $ids = NULL) {
+    if ($entities = $this->getFromStaticCache($ids)) {
+      return $entities;
+    }
+
+    $entities = $this->doLoadMultiple($ids);
+    $this->setStaticCache($entities);
+    return $entities;
+  }
+
+  /**
+   * {@inheritdoc}
    */
   protected function doLoadMultiple(array $ids = NULL) {
+    $documents = $this->rethinkdb->getAll($this->getTableName(), $ids);
+
+    $storage = $this->entityManager->getStorage($this->entityType->id());
+
+    $results = [];
+    foreach ($documents as $document) {
+      $array_copy = $document->getArrayCopy();
+      $results[$array_copy['id']] = $storage->create($array_copy);
+    }
+
+    return $results;
   }
 
   /**
@@ -136,6 +149,20 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function delete(array $entities) {
+    $ids = [];
+    foreach ($entities as $entity) {
+      $ids[] = $entity->id();
+    }
+
+    $results = $this->rethinkdb->deleteAll($this->getTableName(), $ids);
+    $this->resetCache($ids);
+    return $results;
+  }
+
+  /**
    * Performs storage-specific saving of the entity.
    *
    * @param int|string $id
@@ -148,7 +175,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   returns SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
    */
   protected function doSave($id, EntityInterface $entity) {
-    return $this->rethinkdb->insert($this->getTableName(), $entity->getDynamicFields())->getArrayCopy();
+    $method = $entity->id() ? 'update' : 'insert';
+    return $this->rethinkdb->{$method}($this->getTableName(), $entity->getValues())->getArrayCopy();
   }
 
   /**
