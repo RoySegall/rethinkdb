@@ -36,7 +36,7 @@ class RethinkDB {
    */
   public function __construct(Settings $settings) {
     $info = $settings->get('rethinkdb', [
-      'host' => 'localhsot',
+      'host' => 'localhost',
       'port' => '28015',
       'database' => 'drupal',
       'apiKey' => NULL,
@@ -110,6 +110,8 @@ class RethinkDB {
    *   Optional. Delete the DB if exists. Default to TRUE.
    *
    * @throws \Exception
+   *
+   * @return RethinkDB
    */
   public function createDb($db = NULL, $delete_if_exists = TRUE) {
     if (!$db) {
@@ -128,6 +130,8 @@ class RethinkDB {
     }
 
     \r\dbCreate($db)->run($this->getConnection());
+
+    return $this;
   }
 
   /**

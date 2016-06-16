@@ -46,6 +46,7 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
    */
   public function set($name, $value, $notify = TRUE) {
     $this->values[$name] = $value;
+    return $this;
   }
 
   /**

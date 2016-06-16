@@ -157,7 +157,9 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
       $ids[] = $entity->id();
     }
 
-    return $this->rethinkdb->deleteAll($this->getTableName(), $ids);
+    $results = $this->rethinkdb->deleteAll($this->getTableName(), $ids);
+    $this->resetCache($ids);
+    return $results;
   }
 
   /**
