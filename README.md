@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RoySegall/rethinkdb.svg?branch=8.x-1.x)](https://travis-ci.org/RoySegall/rethinkdb)
+
 # RethinkDB for Drupal
 
 This is an ORM for RethinkDB. Which mean the module does not intend to replace
