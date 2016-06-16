@@ -6,6 +6,7 @@
 namespace Drupal\rethinkdb\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Wrapping the base content entity class. This is used when we need to add
@@ -30,21 +31,6 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
   public function setValues($dynamicFields) {
     $this->values = $dynamicFields;
 
-    return $this;
-  }
-
-  /**
-   * Adding a dynamic field on the fly.
-   *
-   * @param $key
-   *   The name of the field.
-   * @param $value
-   *   The value of the field.
-   *
-   * @return $this
-   */
-  public function setDynamicField($key, $value) {
-    $this->values[$key] = $value;
     return $this;
   }
 
@@ -74,6 +60,10 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
    */
   public function delete() {
     $this->entityTypeManager()->getStorage($this->entityTypeId)->delete([$this]);
+  }
+
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    return [];
   }
 
 }
