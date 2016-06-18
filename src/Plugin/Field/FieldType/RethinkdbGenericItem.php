@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * @FieldType(
- *   id = "rethinkdb_generic",
+ *   id = "rethinkdb",
  *   label = @Translation("Rethink DB Reference"),
  *   description = @Translation("This field stores the ID of a file as an integer value."),
  *   category = @Translation("Reference"),
@@ -35,44 +35,6 @@ class RethinkdbGenericItem extends EntityReferenceItem {
     );
   }
 
-//  public static function defaultStorageSettings() {
-//    return array(
-//      'target_type' => \Drupal::moduleHandler()->moduleExists('node') ? 'node' : 'user',
-//    ) + parent::defaultStorageSettings();
-//  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultFieldSettings() {
-    return array(
-      'handler' => 'default:rethinkdb',
-    ) + parent::defaultFieldSettings();
-  }
-
-  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
-    $form = parent::fieldSettingsForm($form, $form_state);
-
-    $entity_types = \Drupal::entityTypeManager()->getDefinitions();
-
-    $select = ['---' => $this->t('Select entity type')];
-    foreach ($entity_types as $entity_type) {
-      if ($entity_type->get('rethink')) {
-        $select[$entity_type->id()] = $entity_type->getLabel();
-      }
-    }
-
-    $form['handler']['handler_settings']['entity_type'] = array(
-      '#type' => 'select',
-      '#title' => t('Select RethinkDB based entity'),
-      '#options' => $select,
-    );
-
-    dpm($form['handler']);
-
-    return $form;
-  }
-
   /**
    * {@inheritdoc}
    */
@@ -80,6 +42,13 @@ class RethinkdbGenericItem extends EntityReferenceItem {
     $element = [];
 
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getPreconfiguredOptions() {
+    return [];
   }
 
 }

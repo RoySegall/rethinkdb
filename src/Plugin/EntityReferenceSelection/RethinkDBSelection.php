@@ -1,31 +1,19 @@
 <?php
 
-namespace Drupal\rethinkdb\Entity\Plugin\EntityReferenceSelection;
+namespace Drupal\rethinkdb\Plugin\EntityReferenceSelection;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\user\EntityOwnerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'selection' entity_reference.
  *
  * @EntityReferenceSelection(
- *   id = "RethinkDB",
+ *   id = "rethinkdb",
  *   label = @Translation("RethinkDB entities selection based"),
  *   group = "rethinkdb",
- *   weight = 0
  * )
  */
 class RethinkDBSelection extends DefaultSelection {
@@ -47,39 +35,10 @@ class RethinkDBSelection extends DefaultSelection {
       '#type' => 'select',
       '#title' => t('Select RethinkDB based entity'),
       '#options' => $select,
+      '#default_value' => $this->configuration['handler_settings']['entity_type'],
     );
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // If no checkboxes were checked for 'target_bundles', store NULL ("all
-    // bundles are referenceable") rather than empty array ("no bundle is
-    // referenceable" - typically happens when all referenceable bundles have
-    // been deleted).
-    if ($form_state->getValue(['settings', 'handler_settings', 'target_bundles']) === []) {
-      $form_state->setValue(['settings', 'handler_settings', 'target_bundles'], NULL);
-    }
-
-    // Don't store the 'target_bundles_update' button value into the field
-    // config settings.
-    $form_state->unsetValue(['settings', 'handler_settings', 'target_bundles_update']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) { }
-
-  /**
-   * Form element validation handler; Filters the #value property of an element.
-   */
-  public static function elementValidateFilter(&$element, FormStateInterface $form_state) {
-    $element['#value'] = array_filter($element['#value']);
-    $form_state->setValueForElement($element, $element['#value']);
   }
 
   /**
@@ -134,26 +93,6 @@ class RethinkDBSelection extends DefaultSelection {
     }
 
     return $result;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createNewEntity($entity_type_id, $bundle, $label, $uid) {
-    $entity_type = $this->entityManager->getDefinition($entity_type_id);
-    $bundle_key = $entity_type->getKey('bundle');
-    $label_key = $entity_type->getKey('label');
-
-    $entity = $this->entityManager->getStorage($entity_type_id)->create(array(
-      $bundle_key => $bundle,
-      $label_key => $label,
-    ));
-
-    if ($entity instanceof EntityOwnerInterface) {
-      $entity->setOwnerId($uid);
-    }
-
-    return $entity;
   }
 
   /**
@@ -228,26 +167,5 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function entityQueryAlter(SelectInterface $query) { }
-
-  /**
-   * Helper method: Passes a query to the alteration system again.
-   *
-   * This allows Entity Reference to add a tag to an existing query so it can
-   * ask access control mechanisms to alter it again.
-   */
-  protected function reAlterQuery(AlterableInterface $query, $tag, $base_table) {
-    // Save the old tags and metadata.
-    // For some reason, those are public.
-    $old_tags = $query->alterTags;
-    $old_metadata = $query->alterMetaData;
-
-    $query->alterTags = array($tag => TRUE);
-    $query->alterMetaData['base_table'] = $base_table;
-    $this->moduleHandler->alter(array('query', 'query_' . $tag), $query);
-
-    // Restore the tags and metadata.
-    $query->alterTags = $old_tags;
-    $query->alterMetaData = $old_metadata;
-  }
 
 }
