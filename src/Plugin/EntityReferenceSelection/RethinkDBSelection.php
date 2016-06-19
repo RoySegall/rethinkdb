@@ -31,12 +31,20 @@ class RethinkDBSelection extends DefaultSelection {
       }
     }
 
-    $form['entity_type'] = array(
+    $form['entity_type'] = [
       '#type' => 'select',
       '#title' => t('Select RethinkDB based entity'),
       '#options' => $select,
       '#default_value' => $this->configuration['handler_settings']['entity_type'],
-    );
+    ];
+
+    $form['search_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Search field'),
+      '#description' => $this->t('The key on which the query will match the text to input of the user.'),
+      '#default_value' => $this->configuration['handler_settings']['search_key'],
+      '#required' => TRUE,
+    ];
 
     return $form;
   }
@@ -45,24 +53,22 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function getReferenceableEntities($match = NULL, $match_operator = 'CONTAINS', $limit = 0) {
-    $target_type = $this->configuration['target_type'];
-
     $query = $this->buildEntityQuery($match, $match_operator);
     if ($limit > 0) {
       $query->range(0, $limit);
     }
 
-    $result = $query->execute();
+    $results = $query->execute();
 
-    if (empty($result)) {
+    if (empty($results)) {
       return array();
     }
 
+    $handler_settings = $this->configuration['handler_settings'];
     $options = array();
-    $entities = $this->entityManager->getStorage($target_type)->loadMultiple($result);
-    foreach ($entities as $entity_id => $entity) {
-      $bundle = $entity->bundle();
-      $options[$bundle][$entity_id] = Html::escape($this->entityManager->getTranslationFromContext($entity)->label());
+
+    foreach ($results as $result) {
+      $options[$handler_settings['entity_type']][$result['id']] = Html::escape($result[$handler_settings['search_key']]);
     }
 
     return $options;
@@ -121,36 +127,13 @@ class RethinkDBSelection extends DefaultSelection {
    *   it.
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-    $target_type = $this->configuration['target_type'];
     $handler_settings = $this->configuration['handler_settings'];
-    $entity_type = $this->entityManager->getDefinition($target_type);
 
-    $query = $this->entityManager->getStorage($target_type)->getQuery();
+    $query = $this->entityManager->getStorage($handler_settings['entity_type'])->getQuery();
 
-    // If 'target_bundles' is NULL, all bundles are referenceable, no further
-    // conditions are needed.
-    if (isset($handler_settings['target_bundles']) && is_array($handler_settings['target_bundles'])) {
-      // If 'target_bundles' is an empty array, no bundle is referenceable,
-      // force the query to never return anything and bail out early.
-      if ($handler_settings['target_bundles'] === []) {
-        $query->condition($entity_type->getKey('id'), NULL, '=');
-        return $query;
-      }
-      else {
-        $query->condition($entity_type->getKey('bundle'), $handler_settings['target_bundles'], 'IN');
-      }
+    if (isset($match)) {
+      $query->condition($handler_settings['search_key'], $match, $match_operator);
     }
-
-    if (isset($match) && $label_key = $entity_type->getKey('label')) {
-      $query->condition($label_key, $match, $match_operator);
-    }
-
-    // Add entity-access tag.
-    $query->addTag($target_type . '_access');
-
-    // Add the Selection handler for system_query_entity_reference_alter().
-    $query->addTag('entity_reference');
-    $query->addMetaData('entity_reference_selection_handler', $this);
 
     // Add the sort option.
     if (!empty($handler_settings['sort'])) {
