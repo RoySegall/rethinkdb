@@ -92,11 +92,9 @@ class RethinkDBSelection extends DefaultSelection {
     // todo: fix the entity reference widget to support the ID string.
     $result = array();
     if ($ids) {
-      $target_type = $this->configuration['target_type'];
-      $entity_type = $this->entityManager->getDefinition($target_type);
       $query = $this->buildEntityQuery();
       $result = $query
-        ->condition('id', $ids, 'CONTAINS')
+        ->condition('id', reset($ids))
         ->execute();
     }
 
@@ -134,7 +132,12 @@ class RethinkDBSelection extends DefaultSelection {
     $query = $this->entityManager->getStorage($handler_settings['entity_type'])->getQuery();
 
     if (isset($match)) {
-      $query->condition($handler_settings['search_key'], $match, $match_operator);
+      if ($match_operator == '=' && preg_match("/.+\s\((\S+)\)/", $match, $matches)) {
+        $query->condition('id', $matches[1], $match_operator);
+      }
+      else {
+        $query->condition($handler_settings['search_key'], $match, $match_operator);
+      }
     }
 
     // Add the sort option.
