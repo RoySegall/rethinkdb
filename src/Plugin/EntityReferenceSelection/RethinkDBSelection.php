@@ -88,13 +88,15 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function validateReferenceableEntities(array $ids) {
+    // todo: add support for in array
+    // todo: fix the entity reference widget to support the ID string.
     $result = array();
     if ($ids) {
       $target_type = $this->configuration['target_type'];
       $entity_type = $this->entityManager->getDefinition($target_type);
       $query = $this->buildEntityQuery();
       $result = $query
-        ->condition($entity_type->getKey('id'), $ids, 'IN')
+        ->condition('id', $ids, 'CONTAINS')
         ->execute();
     }
 
