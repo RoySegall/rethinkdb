@@ -22,30 +22,7 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $entity_types = \Drupal::entityTypeManager()->getDefinitions();
-
-    $select = ['---' => $this->t('Select entity type')];
-    foreach ($entity_types as $entity_type) {
-      if ($entity_type->get('rethink')) {
-        $select[$entity_type->id()] = $entity_type->getLabel();
-      }
-    }
-
-    $form['entity_type'] = [
-      '#type' => 'select',
-      '#title' => t('Select RethinkDB based entity'),
-      '#options' => $select,
-      '#default_value' => $this->configuration['handler_settings']['entity_type'],
-    ];
-
-    $form['search_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Search field'),
-      '#description' => $this->t('The key on which the query will match the text to input of the user.'),
-      '#default_value' => $this->configuration['handler_settings']['search_key'],
-      '#required' => TRUE,
-    ];
-
+    $form = [];
     return $form;
   }
 
@@ -88,8 +65,6 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function validateReferenceableEntities(array $ids) {
-    // todo: add support for in array
-    // todo: fix the entity reference widget to support the ID string.
     $result = array();
     if ($ids) {
       $query = $this->buildEntityQuery();

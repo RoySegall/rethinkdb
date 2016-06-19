@@ -15,7 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   default_widget = "entity_reference_autocomplete",
  *   default_formatter = "entity_reference_label",
  *   list_class = "\Drupal\rethinkdb\Plugin\Field\FieldType\RethinkDBFieldItemList",
- *   constraints = {"ReferenceAccess" = {}, "FileValidation" = {}}
+ *   constraints = {}
  * )
  */
 class RethinkdbGenericItem extends EntityReferenceItem {
@@ -41,7 +41,40 @@ class RethinkdbGenericItem extends EntityReferenceItem {
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     $element = [];
 
+    $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+    $select = ['---' => $this->t('Select entity type')];
+    foreach ($entity_types as $entity_type) {
+      if ($entity_type->get('rethink')) {
+        $select[$entity_type->id()] = $entity_type->getLabel();
+      }
+    }
+
+    $element['target_type'] = [
+      '#type' => 'select',
+      '#title' => t('Select RethinkDB based entity'),
+      '#options' => $select,
+      '#default_value' =>  $this->getSetting('target_type')
+    ];
+
+    $element['search_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Search field'),
+      '#description' => $this->t('The key on which the query will match the text to input of the user.'),
+      '#default_value' => $this->getSetting('search_key'),
+      '#required' => TRUE,
+    ];
+
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultStorageSettings() {
+    return array(
+      'target_type' => '',
+      'search_key' => 'title',
+    ) + parent::defaultStorageSettings();
   }
 
   /**
