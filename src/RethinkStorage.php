@@ -8,6 +8,7 @@ namespace Drupal\rethinkdb;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -67,6 +68,10 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     /** @var AbstractRethinkDbEntity $entity */
     $entity = parent::create($values);
     return $entity->setValues($values);
+  }
+
+  public function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
+    $entity->setValues($values);
   }
 
   /**
