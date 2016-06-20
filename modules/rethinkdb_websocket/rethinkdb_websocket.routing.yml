@@ -6,10 +6,3 @@ rethinkdb_websocket.rethink_d_b_message_LiveChat:
     _title: 'Live chat'
   requirements:
     _permission: 'access content'
-rethinkdb_websocket.rethink_d_b_message_index:
-  path: '/rethinkdb_websocket/index/{param_1}/{param_2}'
-  defaults:
-    _controller: '\Drupal\rethinkdb_websocket\Controller\RethinkDBMessage::index'
-    _title: 'RethinkDB live chat'
-  requirements:
-    _permission: 'access content'

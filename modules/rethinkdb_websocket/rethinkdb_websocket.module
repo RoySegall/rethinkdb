@@ -23,11 +23,10 @@ function rethinkdb_websocket_help($route_name, RouteMatchInterface $route_match)
   }
 }
 
-/**
- * Implements hook_theme().
- */
-function rethinkdb_websocket_theme() {
-  $theme = [];
+function rethinkdb_websocket_page_attachments(&$page) {
+  if (\Drupal::request()->getPathInfo() != '/rethinkdb_websocket/live_chat') {
+    return;
+  }
 
-  return $theme;
+  $page['#attached']['library'][] = 'rethinkdb_websocket/rethinkdb_live_chat';
 }

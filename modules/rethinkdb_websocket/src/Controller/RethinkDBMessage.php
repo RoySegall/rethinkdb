@@ -24,8 +24,8 @@ class RethinkDBMessage extends ControllerBase {
    */
   public function LiveChat() {
     return [
-        '#type' => 'markup',
-        '#markup' => $this->t('Implement method: LiveChat')
+      '#type' => 'markup',
+      '#markup' => $this->t('Implement method: LiveChat')
     ];
   }
 

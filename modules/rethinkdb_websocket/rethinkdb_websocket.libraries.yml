@@ -1,0 +1,5 @@
+rethinkdb_live_chat:
+  version: 1.x
+  js:
+    bower_components/socket.io-client/socket.io.js: {}
+    js/live_chat.js: {}
