@@ -56,25 +56,7 @@ class RethinkdbGenericItem extends EntityReferenceItem {
       '#default_value' =>  $this->getSetting('target_type')
     ];
 
-    $element['search_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Search field'),
-      '#description' => $this->t('The key on which the query will match the text to input of the user.'),
-      '#default_value' => $this->getSetting('search_key'),
-      '#required' => TRUE,
-    ];
-
     return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultStorageSettings() {
-    return array(
-      'target_type' => '',
-      'search_key' => 'title',
-    ) + parent::defaultStorageSettings();
   }
 
   /**
@@ -82,6 +64,72 @@ class RethinkdbGenericItem extends EntityReferenceItem {
    */
   public static function getPreconfiguredOptions() {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function _fieldSettingsForm(array $form, FormStateInterface $form_state) {
+    $field = $form_state->getFormObject()->getEntity();
+
+    // Get all selection plugins for this entity type.
+    $selection_plugins = \Drupal::service('plugin.manager.entity_reference_selection')->getSelectionGroups($this->getSetting('target_type'));
+    $handlers_options = array();
+    foreach (array_keys($selection_plugins) as $selection_group_id) {
+      // We only display base plugins (e.g. 'default', 'views', ...) and not
+      // entity type specific plugins (e.g. 'default:node', 'default:user',
+      // ...).
+      if (array_key_exists($selection_group_id, $selection_plugins[$selection_group_id])) {
+        $handlers_options[$selection_group_id] = Html::escape($selection_plugins[$selection_group_id][$selection_group_id]['label']);
+      }
+      elseif (array_key_exists($selection_group_id . ':' . $this->getSetting('target_type'), $selection_plugins[$selection_group_id])) {
+        $selection_group_plugin = $selection_group_id . ':' . $this->getSetting('target_type');
+        $handlers_options[$selection_group_plugin] = Html::escape($selection_plugins[$selection_group_id][$selection_group_plugin]['base_plugin_label']);
+      }
+    }
+
+    $form = array(
+      '#type' => 'container',
+      '#process' => array(array(get_class($this), 'fieldSettingsAjaxProcess')),
+      '#element_validate' => array(array(get_class($this), 'fieldSettingsFormValidate')),
+
+    );
+    $form['handler'] = array(
+      '#type' => 'details',
+      '#title' => t('Reference type'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+      '#process' => array(array(get_class($this), 'formProcessMergeParent')),
+    );
+
+    $form['handler']['handler'] = array(
+      '#type' => 'select',
+      '#title' => t('Reference method'),
+      '#options' => $handlers_options,
+      '#default_value' => $field->getSetting('handler'),
+      '#required' => TRUE,
+      '#ajax' => TRUE,
+      '#limit_validation_errors' => array(),
+    );
+    $form['handler']['handler_submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Change handler'),
+      '#limit_validation_errors' => array(),
+      '#attributes' => array(
+        'class' => array('js-hide'),
+      ),
+      '#submit' => array(array(get_class($this), 'settingsAjaxSubmit')),
+    );
+
+    $form['handler']['handler_settings'] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('entity_reference-settings')),
+    );
+
+    $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getSelectionHandler($field);
+    $form['handler']['handler_settings'] += $handler->buildConfigurationForm(array(), $form_state);
+
+    return $form;
   }
 
 }

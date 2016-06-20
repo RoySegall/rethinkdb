@@ -23,6 +23,17 @@ class RethinkDBSelection extends DefaultSelection {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = [];
+
+    $field = $form_state->getFormObject()->getEntity();
+
+    $form['search_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Searchsss field'),
+      '#description' => $this->t('The key on which the query will match the text to input of the user.'),
+      '#default_value' => $field->getSetting('search_key'),
+      '#required' => TRUE,
+    ];
+
     return $form;
   }
 
@@ -45,7 +56,7 @@ class RethinkDBSelection extends DefaultSelection {
     $options = array();
 
     foreach ($results as $result) {
-      $options[$handler_settings['entity_type']][$result['id']] = Html::escape($result[$handler_settings['search_key']]);
+      $options[$this->configuration['target_type']][$result['id']] = Html::escape($result[$handler_settings['search_key']]);
     }
 
     return $options;
@@ -104,7 +115,7 @@ class RethinkDBSelection extends DefaultSelection {
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
     $handler_settings = $this->configuration['handler_settings'];
 
-    $query = $this->entityManager->getStorage($handler_settings['entity_type'])->getQuery();
+    $query = $this->entityManager->getStorage($this->configuration['target_type'])->getQuery();
 
     if (isset($match)) {
       if ($match_operator == '=' && preg_match("/.+\s\((\S+)\)/", $match, $matches)) {
