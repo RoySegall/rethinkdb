@@ -1,0 +1,7 @@
+name: RethinkDB WebSocket
+type: module
+description: Provide a websoket demo using Horizon.js
+core: 8.x
+package: RethinkDB
+dependencies:
+  - rethinkdb_example
