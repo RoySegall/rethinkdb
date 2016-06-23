@@ -17,7 +17,9 @@ use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
  *   base_table = "rethinkdb_messages",
  *   translatable = FALSE,
  *   rethink = TRUE,
- *   entity_keys = {}
+ *   entity_keys = {
+ *    "id" = "id"
+ *   }
  * )
  */
 class RethinkMessages extends AbstractRethinkDbEntity {

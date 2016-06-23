@@ -29,6 +29,7 @@ class Query extends QueryBase implements QueryInterface {
     '<' => 'lt',
     '<=' => 'le',
     'CONTAINS' => 'match',
+    'IN' => 'args',
   ];
 
   /**
@@ -66,7 +67,13 @@ class Query extends QueryBase implements QueryInterface {
         throw new RqlException("The operator {$operator} does not allowed. Only " . implode(', ', array_keys($this->operators)));
       }
 
-      $row = \r\row($condition['field'])->{$this->operators[$operator]}($condition['value']);
+      if ($operator == 'IN') {
+        $row = \r\args($condition['value']);
+      }
+      else {
+        $row = \r\row($condition['field'])->{$this->operators[$operator]}($condition['value']);
+      }
+
       $this->table = $this->table->filter($row);
     }
 
@@ -111,7 +118,7 @@ class Query extends QueryBase implements QueryInterface {
     $items = [];
     foreach ($this->table->run($rethinkdb->getConnection()) as $item) {
       $array_copy = $item->getArrayCopy();
-      $items[$array_copy['id']] = $array_copy;
+      $items[] = $array_copy['id'];
     }
 
     return $items;
