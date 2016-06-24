@@ -1,0 +1,8 @@
+# Rethink replica list menu items definition
+entity.rethink_replica_list.collection:
+  title: 'Rethink replica list'
+  route_name: entity.rethink_replica_list.collection
+  description: 'List Rethink replica list (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

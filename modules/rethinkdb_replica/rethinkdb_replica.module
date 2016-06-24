@@ -1,0 +1,18 @@
+<?php
+
+use Drupal\hal\Normalizer\ContentEntityNormalizer;
+use Drupal\rethinkdb\RethinkDB;
+
+function rethinkdb_replica_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!\Drupal\rethinkdb_replica\Entity\RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  /** @var ContentEntityNormalizer $normalize */
+  $normalize = \Drupal::service('serializer.normalizer.entity.hal');
+
+  /** @var RethinkDB $rethink */
+  $rethink = \Drupal::service('rethinkdb');
+  $rethink->insert($entity->getEntityTypeId() . '_replica', $normalize->normalize($entity));
+}
