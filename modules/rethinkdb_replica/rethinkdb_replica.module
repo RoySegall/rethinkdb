@@ -3,6 +3,9 @@
 use Drupal\hal\Normalizer\ContentEntityNormalizer;
 use Drupal\rethinkdb\RethinkDB;
 
+/**
+ * Implements hook_entity_insert().
+ */
 function rethinkdb_replica_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
 
   if (!\Drupal\rethinkdb_replica\Entity\RethinkReplicaList::load($entity->getEntityTypeId())) {

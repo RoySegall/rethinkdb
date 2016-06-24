@@ -4,4 +4,4 @@ description: Creating a replica of entities
 core: 8.x
 package: RethinkDB
 dependencies:
-  - RethinkDB
+  - rethinkdb

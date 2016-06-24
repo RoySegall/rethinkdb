@@ -1,6 +1,0 @@
-entity.rethink_replica_list.add_form:
-  route_name: 'entity.rethink_replica_list.add_form'
-  title: 'Add Rethink replica list'
-  appears_on:
-    - entity.rethink_replica_list.collection
-
