@@ -1,21 +1,78 @@
 <?php
 
-use Drupal\hal\Normalizer\ContentEntityNormalizer;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rethinkdb\RethinkDB;
+use Drupal\rethinkdb_replica\Entity\RethinkReplicaList;
+use Drupal\rethinkdb_replica\RethinkDBReplica;
 
 /**
  * Implements hook_entity_insert().
  */
-function rethinkdb_replica_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+function rethinkdb_replica_entity_insert(EntityInterface $entity) {
 
-  if (!\Drupal\rethinkdb_replica\Entity\RethinkReplicaList::load($entity->getEntityTypeId())) {
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
     return;
   }
 
-  /** @var ContentEntityNormalizer $normalize */
-  $normalize = \Drupal::service('serializer.normalizer.entity.hal');
+  /** @var RethinkDB $rethink */
+  $rethink = \Drupal::service('rethinkdb');
+  $rethink->insert($entity->getEntityTypeId() . '_replica', RethinkDBReplica::EntityFlatter($entity));
+
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function rethinkdb_replica_entity_update(EntityInterface $entity) {
+
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  $primary_key = \Drupal::entityTypeManager()->getDefinition($entity->getEntityTypeId())->getKey('id');
+
+  $flatt_original = RethinkDBReplica::EntityFlatter($entity->original);
+  $flatt = RethinkDBReplica::EntityFlatter($entity);
+
+  if (!array_filter(array_diff($flatt, $flatt_original))) {
+    // No new updates.
+    return;
+  }
 
   /** @var RethinkDB $rethink */
   $rethink = \Drupal::service('rethinkdb');
-  $rethink->insert($entity->getEntityTypeId() . '_replica', $normalize->normalize($entity));
+  $replica_name = $entity->getEntityTypeId() . '_replica';
+
+  $result = $rethink->getTable($replica_name)
+    ->filter(\r\row($primary_key)->eq($entity->id()))
+    ->run($rethink->getConnection());
+
+  $document = $result->current()->getArrayCopy();
+
+  $rethink->getTable($replica_name)
+    ->get($document['id'])
+    ->update(array_filter(array_diff($flatt, $flatt_original)))
+    ->run($rethink->getConnection());
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function rethinkdb_replica_entity_delete(EntityInterface $entity) {
+
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  $primary_key = \Drupal::entityTypeManager()->getDefinition($entity->getEntityTypeId())->getKey('id');
+
+  /** @var RethinkDB $rethink */
+  $rethink = \Drupal::service('rethinkdb');
+  $replica_name = $entity->getEntityTypeId() . '_replica';
+
+  $rethink->getTable($replica_name)
+    ->filter(\r\row($primary_key)->eq($entity->id()))
+    ->delete()
+    ->run($rethink->getConnection());
+
 }
