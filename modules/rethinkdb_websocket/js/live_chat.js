@@ -26,11 +26,11 @@
       var channel = pusher.subscribe('activity_stream');
 
       channel.bind('example_create_comment', function(data) {
-        $context.find('#activity-stream .content').prepend(Drupal.t('A new comment was created. cid: ' + data.field_comment_reference) + "<br />");
+        $context.find('#activity-stream .content').prepend(data.message[0] + "<br />");
       });
 
       channel.bind('example_create_node', function(data) {
-        $context.find('#activity-stream .content').prepend(Drupal.t('A new node was created. nid: ' + data.field_node_reference) + "<br />");
+        $context.find('#activity-stream .content').prepend(data.message[0] + "<br />");
       });
     }
   };
