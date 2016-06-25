@@ -1,0 +1,12 @@
+rethinkdb_replica.rethink_replica_list.*:
+  type: config_entity
+  label: 'Rethink replica list config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
