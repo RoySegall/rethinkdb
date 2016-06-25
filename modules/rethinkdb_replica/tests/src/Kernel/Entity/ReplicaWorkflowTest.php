@@ -8,8 +8,10 @@
 namespace Drupal\Tests\rethinkdb_replica\Kernel\Entity;
 
 use Drupal\entity_test\Entity\EntityTest;
+use Drupal\rethinkdb\RethinkDB;
 use Drupal\rethinkdb_replica\RethinkDBReplica;
 use Drupal\Tests\rethinkdb\Kernel\Entity\RethinkTestsBase;
+use r\Queries\Control\Changes;
 
 /**
  * Tests entity reference selection plugins.
@@ -50,6 +52,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
 
     $primary_key = $entity_definition->getKey('id');
 
+    /** @var RethinkDB $rethink */
     $rethink = \Drupal::service('rethinkdb');
     $replica_name = $entity->getEntityTypeId() . '_replica';
 
@@ -72,10 +75,17 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
 
     $document = $result->current()->getArrayCopy();
 
-//    $this->assertEquals($document['name'], $new_label);
-//    $this->assertNotEquals($document['name'], $label);
+    $this->assertEquals($document['name'], $new_label);
+    $this->assertNotEquals($document['name'], $label);
 
-    var_dump($document);
+    // Deleting the entity.
+    $entity->delete();
+
+    $result = $rethink->getTable($replica_name)
+      ->get($document['id'])
+      ->run($rethink->getConnection());
+
+    $this->assertEmpty($result);
   }
 
 }

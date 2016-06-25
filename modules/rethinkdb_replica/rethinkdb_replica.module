@@ -31,14 +31,6 @@ function rethinkdb_replica_entity_update(EntityInterface $entity) {
 
   $primary_key = \Drupal::entityTypeManager()->getDefinition($entity->getEntityTypeId())->getKey('id');
 
-  $flatt_original = RethinkDBReplica::EntityFlatter($entity->original);
-  $flatt = RethinkDBReplica::EntityFlatter($entity);
-
-  if (!array_filter(array_diff($flatt, $flatt_original))) {
-    // No new updates.
-    return;
-  }
-
   /** @var RethinkDB $rethink */
   $rethink = \Drupal::service('rethinkdb');
   $replica_name = $entity->getEntityTypeId() . '_replica';
@@ -51,7 +43,7 @@ function rethinkdb_replica_entity_update(EntityInterface $entity) {
 
   $rethink->getTable($replica_name)
     ->get($document['id'])
-    ->update(array_filter(array_diff($flatt, $flatt_original)))
+    ->update(RethinkDBReplica::EntityFlatter($entity))
     ->run($rethink->getConnection());
 }
 
