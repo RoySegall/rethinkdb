@@ -28,7 +28,9 @@ class RethinkDBMessage extends ControllerBase {
       '#markup' => "<div id='activity-stream'>
         <div class='header'>" . $this->t('Create a node or comment and the magic!') . "</div>
         <div class='content'></div>
-      </div>"
+      </div>",
+      '#attached' => ['library' => ['rethinkdb_websocket/rethinkdb_live_chat'],
+      ],
     ];
   }
 
