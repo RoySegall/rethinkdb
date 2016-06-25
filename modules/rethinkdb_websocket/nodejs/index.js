@@ -1,13 +1,13 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+r = require('rethinkdb');
+var connection = null;
 
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
+r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+  if (err) throw err;
+  connection = conn;
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+  r.db('drupal8').table('node_replica').changes().run(conn, function(err, cursor) {
+    cursor.each(function(connection, value) {
+      console.log(value['new_val'].title);
+    });
+  })
 });
