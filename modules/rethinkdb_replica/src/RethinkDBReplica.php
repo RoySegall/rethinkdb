@@ -3,9 +3,19 @@
 namespace Drupal\rethinkdb_replica;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\rethinkdb\RethinkDB;
+use Drupal\rethinkdb_replica\Entity\RethinkReplicaList;
 
 class RethinkDBReplica {
 
+  /**
+   * Flattering the entity object and make it ready for storing in RethinkDB.
+   *
+   * @param EntityInterface $entity
+   *   The entity object.
+   *
+   * @return array
+   */
   public static function EntityFlatter(EntityInterface $entity) {
     $entity_array = $entity->toArray();
 
@@ -35,5 +45,17 @@ class RethinkDBReplica {
 
     return $entity_array;
   }
-  
+
+  /**
+   * Creating a replica of the DB.
+   * 
+   * @param $entity_type_id
+   */
+  public static function createReplica($entity_type_id) {
+    /** @var RethinkDB $rethink */
+    $rethink = \Drupal::service('rethinkdb');
+    $rethink->tableCreate($entity_type_id . '_replica');
+    RethinkReplicaList::create(['id' => $entity_type_id])->save();
+  }
+
 }

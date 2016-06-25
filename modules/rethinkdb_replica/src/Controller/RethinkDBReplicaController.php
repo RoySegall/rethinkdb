@@ -7,6 +7,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\rethinkdb\RethinkDB;
 use Drupal\rethinkdb_replica\Entity\RethinkReplicaList;
+use Drupal\rethinkdb_replica\RethinkDBReplica;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\rethinkdb_replica\Controller
  */
-class RethinkDBReplica extends ControllerBase {
+class RethinkDBReplicaController extends ControllerBase {
 
   /**
    * Manage entities replica creation.
@@ -58,10 +59,7 @@ class RethinkDBReplica extends ControllerBase {
    * @return RedirectResponse
    */
   public function createReplica($entity) {
-    /** @var RethinkDB $rethink */
-    $rethink = \Drupal::service('rethinkdb');
-    $rethink->tableCreate($entity . '_replica');
-    RethinkReplicaList::create(['id' => $entity])->save();
+    RethinkDBReplica::createReplica($entity);
 
     $params = ['@name' => \Drupal::entityTypeManager()->getDefinition($entity)->getLabel()];
     drupal_set_message($this->t('A replica table for @name has created.', $params));

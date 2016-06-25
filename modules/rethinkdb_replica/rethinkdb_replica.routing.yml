@@ -2,7 +2,7 @@
 rethinkdb_replica.rethinkdb_replica_list:
   path: '/admin/configuration/rethinkdb/replica_manage'
   defaults:
-    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplica::replicaList'
+    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplicaController::replicaList'
     _title: 'Create replica'
   requirements:
     _permission: 'access content'
@@ -11,7 +11,7 @@ rethinkdb_replica.rethinkdb_replica_list:
 rethinkdb_replica.rethinkdb_replica_create:
   path: '/admin/configuration/rethinkdb/replica_manage/{entity}'
   defaults:
-    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplica::createReplica'
+    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplicaController::createReplica'
     _title: 'Create replica'
   requirements:
     _permission: 'access content'
