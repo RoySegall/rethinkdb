@@ -4,4 +4,6 @@ description: Provide a websoket demo using Horizon.js
 core: 8.x
 package: RethinkDB
 dependencies:
-  - rethinkdb_example
+  - rethinkdb_replica
+  - message
+  - message_example

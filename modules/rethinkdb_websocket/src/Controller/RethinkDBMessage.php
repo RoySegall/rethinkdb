@@ -25,7 +25,10 @@ class RethinkDBMessage extends ControllerBase {
   public function LiveChat() {
     return [
       '#type' => 'markup',
-      '#markup' => $this->t('Implement method: LiveChat')
+      '#markup' => "<div id='activity-stream'>
+        <div class='header'>" . $this->t('Create a node or comment and the magic!') . "</div>
+        <div class='content'></div>
+      </div>"
     ];
   }
 
