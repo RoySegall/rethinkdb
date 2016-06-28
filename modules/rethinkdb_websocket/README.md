@@ -3,7 +3,6 @@ RethinkDB websocket
 
 Example on how to implement websocket with Drupal, Pusher and RethinkDB.
 
-
 Dependencies
 ===
 
@@ -33,6 +32,5 @@ Pusher app ID
 
 Watch the magic beings
 ===
-Go to `rethinkdb_websocket/live_chat`. Open a secondary window and start to 
+Go to `rethinkdb_websocket/activity_stream`. Open a secondary window and start to 
 create content or comments.
-

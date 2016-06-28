@@ -1,9 +1,9 @@
 
-rethinkdb_websocket.rethink_d_b_message_LiveChat:
-  path: '/rethinkdb_websocket/live_chat'
+rethinkdb_websocket.rethink_db_message_LiveChat:
+  path: '/rethinkdb_websocket/activity_stream'
   defaults:
     _controller: '\Drupal\rethinkdb_websocket\Controller\RethinkDBMessage::LiveChat'
-    _title: 'Live chat'
+    _title: 'Activity stream'
   requirements:
     _permission: 'access content'
 
