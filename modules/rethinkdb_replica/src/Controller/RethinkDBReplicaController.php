@@ -4,6 +4,8 @@ namespace Drupal\rethinkdb_replica\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Element\RenderElement;
+use Drupal\Core\Render\ElementInfoManager;
 use Drupal\Core\Url;
 use Drupal\rethinkdb\RethinkDB;
 use Drupal\rethinkdb_replica\Entity\RethinkReplicaList;
@@ -34,7 +36,21 @@ class RethinkDBReplicaController extends ControllerBase {
       }
       else {
         $params = ['entity' => $entity_type_id];
-        $operation = Link::createFromRoute($this->t('Create a replica table'), 'rethinkdb_replica.rethinkdb_replica_create', $params)->toString();
+        $element = array(
+          '#type' => 'operations',
+          '#links' => array(
+            'create_replica' => array(
+              'title' => $this->t('Create a replica table'),
+              'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create', $params),
+            ),
+            'create_replica_and_clone' => array(
+              'title' => $this->t('Create replica table and clone entities'),
+              'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create_and_clone', $params),
+            ),
+          ),
+        );
+
+        $operation = \Drupal::service('renderer')->render($element);
       }
 
       $rows[] = [
@@ -48,6 +64,20 @@ class RethinkDBReplicaController extends ControllerBase {
       '#header' => [$this->t('Entity type'), $this->t('Operations')],
       '#rows' => $rows,
     ];
+  }
+
+  /**
+   * Creating a table replica and cloning all the entities of that type.
+   *
+   * @param $entity
+   *   The enity type.
+   */
+  static public function createReplicaAndClone($entity) {
+    // Get all the entities.
+
+    // Split into small batches
+
+    // Set batch operation.
   }
 
   /**
