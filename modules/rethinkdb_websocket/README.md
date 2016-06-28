@@ -8,6 +8,7 @@ Dependencies
 ===
 
 You need to have:
+
 1. [NodeJS](http://www.nodejs.org) installed and npm as well.
 2. [Pusher](http://www.pusher.com) account with a dedicated application.
 3. [Bower](http://bower.io)
