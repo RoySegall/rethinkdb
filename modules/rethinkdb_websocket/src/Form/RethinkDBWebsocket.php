@@ -23,9 +23,7 @@ class RethinkDBWebsocket extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return [
-      'rethinkdb_websocket.settings'
-    ];
+    return ['rethinkdb_websocket.settings'];
   }
 
   /**
@@ -53,19 +51,12 @@ class RethinkDBWebsocket extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    parent::submitForm($form, $form_state);
-
     $this->config('rethinkdb_websocket.settings')
       ->set('pusher_app_id', $form_state->getValue('app_id'))
       ->save();
+
+    parent::submitForm($form, $form_state);
   }
 
 }

@@ -17,10 +17,10 @@ use Drupal\Core\Controller\ControllerBase;
 class RethinkDBMessage extends ControllerBase {
 
   /**
-   * Livechat.
+   * Activity stream.
    *
    * @return string
-   *   Return Hello string.
+   *   Return markup of the activity stream.
    */
   public function LiveChat() {
     return [
