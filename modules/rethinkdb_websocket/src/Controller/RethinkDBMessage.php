@@ -29,7 +29,13 @@ class RethinkDBMessage extends ControllerBase {
         <div class='header'>" . $this->t('Create a node or comment and the magic!') . "</div>
         <div class='content'></div>
       </div>",
-      '#attached' => ['library' => ['rethinkdb_websocket/rethinkdb_live_chat'],
+      '#attached' => [
+        'library' => ['rethinkdb_websocket/rethinkdb_live_chat'],
+        'drupalSettings' => [
+          'rethinkdb_websocket' => [
+            'app_id' => \Drupal::config('rethinkdb_websocket.settings')->get('pusher_app_id'),
+          ]
+        ],
       ],
     ];
   }

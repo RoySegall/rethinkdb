@@ -6,3 +6,12 @@ rethinkdb_websocket.rethink_d_b_message_LiveChat:
     _title: 'Live chat'
   requirements:
     _permission: 'access content'
+
+rethinkdb_websocket.rethinkdb_webscoket:
+  path: '/admin/config/rethinkdb_websocket/rethinkdbwebsocket'
+  defaults:
+    _form: '\Drupal\rethinkdb_websocket\Form\RethinkDBWebsocket'
+    _title: 'RethinkDBWebsocket'
+  requirements:
+    _permission: 'access administration pages'
+

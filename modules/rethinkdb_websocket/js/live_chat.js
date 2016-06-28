@@ -1,9 +1,9 @@
 /**
  * @file
- * Defines Javascript behaviors for the node module.
+ * Defines Javascript behaviors for the rethinkdb websocket module.
  */
 
-(function ($, Drupal, Pusher) {
+(function ($, Drupal, Pusher, drupalSettings) {
 
   'use strict';
 
@@ -19,9 +19,7 @@
     attach: function (context) {
       var $context = $(context);
 
-      var pusher = new Pusher('967f75fd40222f07fae5', {
-        encrypted: true
-      });
+      var pusher = new Pusher(drupalSettings.rethinkdb_websocket.app_id, {encrypted: true});
 
       var channel = pusher.subscribe('activity_stream');
 
@@ -35,4 +33,4 @@
     }
   };
 
-})(jQuery, Drupal, Pusher);
+})(jQuery, Drupal, Pusher, drupalSettings);
