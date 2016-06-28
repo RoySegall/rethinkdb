@@ -16,8 +16,11 @@ function rethinkdb_replica_entity_insert(EntityInterface $entity) {
 
   /** @var RethinkDB $rethink */
   $rethink = \Drupal::service('rethinkdb');
-  $rethink->insert($entity->getEntityTypeId() . '_replica', RethinkDBReplica::EntityFlatter($entity));
+  $document = RethinkDBReplica::EntityFlatter($entity);
 
+  \Drupal::moduleHandler()->alter('entity_flatter', $document, $entity);
+
+  $rethink->insert($entity->getEntityTypeId() . '_replica', $document);
 }
 
 /**
@@ -41,9 +44,12 @@ function rethinkdb_replica_entity_update(EntityInterface $entity) {
 
   $document = $result->current()->getArrayCopy();
 
+  $flatt = RethinkDBReplica::EntityFlatter($entity);
+  \Drupal::moduleHandler()->alter('entity_flatter', $document, $entity);
+
   $rethink->getTable($replica_name)
     ->get($document['id'])
-    ->update(RethinkDBReplica::EntityFlatter($entity))
+    ->update($flatt)
     ->run($rethink->getConnection());
 }
 
@@ -66,5 +72,4 @@ function rethinkdb_replica_entity_delete(EntityInterface $entity) {
     ->filter(\r\row($primary_key)->eq($entity->id()))
     ->delete()
     ->run($rethink->getConnection());
-
 }
