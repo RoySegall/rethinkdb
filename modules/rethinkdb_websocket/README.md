@@ -22,6 +22,7 @@ bower install
 ```
 
 Go to `modules/rethinkdb_websocket/nodejs` and:
+
 1. install npm packages ```js npm install```
 2. Copy `pusher.example.json` to `pusher.json` and insert your Pusher 
 application setting.
