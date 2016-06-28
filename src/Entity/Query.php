@@ -7,7 +7,6 @@
 
 namespace Drupal\rethinkdb\Entity;
 
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Entity\Query\QueryBase;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\rethinkdb\RethinkDB;
