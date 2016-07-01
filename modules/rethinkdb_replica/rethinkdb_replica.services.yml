@@ -1,0 +1,4 @@
+services:
+  rethinkdb_replica:
+    class: Drupal\rethinkdb_replica\RethinkDBReplicaServices
+    arguments: ['@rethinkdb', '@entity_type.manager']

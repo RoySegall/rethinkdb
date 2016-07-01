@@ -37,7 +37,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
    * Testing the workflow of replicating tables.
    */
   function testWorkflow() {
-    RethinkDBReplica::createReplica('entity_test');
+    RethinkDBReplica::getService()->createReplica('entity_test');
 
     // Creating an entity.
     $label = $this->randomString();

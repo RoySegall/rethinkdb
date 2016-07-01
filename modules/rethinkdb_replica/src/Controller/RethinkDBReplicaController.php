@@ -70,14 +70,44 @@ class RethinkDBReplicaController extends ControllerBase {
    * Creating a table replica and cloning all the entities of that type.
    *
    * @param $entity
-   *   The enity type.
+   *   The entity type.
+   *
+   * @return array
    */
   static public function createReplicaAndClone($entity) {
     // Get all the entities.
+    $entities = \Drupal::entityQuery($entity)
+      ->execute();
 
-    // Split into small batches
+    // Split into small batches and setting the operations.
+    $chunks = array_chunk(array_keys($entities), 1);
 
-    // Set batch operation.
+    $operations = [];
+
+    $operations[] = [[self::class, 'createDbReplica'], [$entity]];
+
+    foreach ($chunks as $chunk) {
+      $operations[] = [[self::class, 'copyEntity'], [$entity, $chunk]];
+    }
+
+    // Start the batch operation.
+    $batch = array(
+      'title' => t('Creating replica'),
+      'operations' => $operations,
+    );
+    batch_set($batch);
+
+    return batch_process(Url::fromRoute('rethinkdb_replica.rethinkdb_replica_list'));
+  }
+
+  /**
+   * Creating a replica of the table.
+   *
+   * @param $entity
+   *   The entity type.
+   */
+  public static function createDbReplica($entity) {
+    RethinkDBReplica::getService()->createReplica($entity);
   }
 
   /**
@@ -89,7 +119,7 @@ class RethinkDBReplicaController extends ControllerBase {
    * @return RedirectResponse
    */
   public function createReplica($entity) {
-    RethinkDBReplica::createReplica($entity);
+    RethinkDBReplica::getService()->createReplica($entity);
 
     $params = ['@name' => \Drupal::entityTypeManager()->getDefinition($entity)->getLabel()];
     drupal_set_message($this->t('A replica table for @name has created.', $params));
