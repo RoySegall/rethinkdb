@@ -13,8 +13,14 @@ r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
 
   connection = conn;
 
-  r.db('drupal8').table('message_replica').filter(r.row('type').match("example_create_node|example_create_comment")).changes().run(conn, function(err, cursor) {
+  // todo grab the message type template.
+
+  var row = r.row('type').match("example_create_node|example_create_comment");
+
+  r.db('drupal8').table('message_replica').filter(row).changes().run(conn, function(err, cursor) {
     cursor.each(function(connection, value) {
+      // todo replace the message type template with the arguments of the
+      // message.
       pusher.trigger('activity_stream', value['new_val'].type, value['new_val']);
     });
   })

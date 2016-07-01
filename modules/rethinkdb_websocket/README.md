@@ -28,9 +28,17 @@ Go to `modules/rethinkdb_websocket/nodejs` and:
 application setting.
 
 Go to `admin/config/rethinkdb_websocket/rethinkdbwebsocket` and insert the your
-Pusher app ID
+Pusher app ID.
+
+Enable the Message example module - `drush en message_example -y`
+
+Go to `admin/configuration/rethinkdb/replica_manage` and:
+
+1. `Create table replica` for the Message entity.
+2. `Create replica table and clone entities`, the second option on the dropdown
+ menu, for the Message type entity.
 
 Watch the magic beings
 ===
-Go to `rethinkdb_websocket/activity_stream`. Open a secondary window and start to 
-create content or comments.
+Go to `rethinkdb_websocket/activity_stream`. Open a secondary window and start 
+to  create content or comments.
