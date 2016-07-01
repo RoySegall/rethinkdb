@@ -31,31 +31,37 @@ class RethinkDBReplicaController extends ControllerBase {
 
     $rows = [];
     foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type_id => $entity_type_info) {
+      $params = ['entity' => $entity_type_id];
+
       if (in_array($entity_type_id, array_keys($replicas))) {
-        $operation = $this->t('Cloned');
+        $links = [
+          'create_replica_and_clone' => [
+            'title' => $this->t('Create replica table and clone entities'),
+            'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create_and_clone', $params),
+          ],
+        ];
       }
       else {
-        $params = ['entity' => $entity_type_id];
-        $element = array(
-          '#type' => 'operations',
-          '#links' => array(
-            'create_replica' => array(
-              'title' => $this->t('Create a replica table'),
-              'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create', $params),
-            ),
-            'create_replica_and_clone' => array(
-              'title' => $this->t('Create replica table and clone entities'),
-              'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create_and_clone', $params),
-            ),
-          ),
-        );
-
-        $operation = \Drupal::service('renderer')->render($element);
+        $links = [
+          'create_replica' => [
+            'title' => $this->t('Create a replica table'),
+            'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create', $params),
+          ],
+          'create_replica_and_clone' => [
+            'title' => $this->t('Create replica table and clone entities'),
+            'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create_and_clone', $params),
+          ],
+        ];
       }
+
+      $element = array(
+        '#type' => 'operations',
+        '#links' => $links,
+      );
 
       $rows[] = [
         $entity_type_info->getLabel(),
-        $operation,
+        \Drupal::service('renderer')->render($element),
       ];
     }
 
@@ -80,11 +86,13 @@ class RethinkDBReplicaController extends ControllerBase {
       ->execute();
 
     // Split into small batches and setting the operations.
-    $chunks = array_chunk(array_keys($entities), 1);
+    $chunks = array_chunk(array_keys($entities), 150);
 
     $operations = [];
 
-    $operations[] = [[self::class, 'createDbReplica'], [$entity]];
+    if (!RethinkReplicaList::load($entity)) {
+      $operations[] = [[self::class, 'createDbReplica'], [$entity]];
+    }
 
     foreach ($chunks as $chunk) {
       $operations[] = [[self::class, 'copyEntity'], [$entity, $chunk]];
@@ -108,6 +116,22 @@ class RethinkDBReplicaController extends ControllerBase {
    */
   public static function createDbReplica($entity) {
     RethinkDBReplica::getService()->createReplica($entity);
+  }
+
+  /**
+   * @param $entity
+   *   The entity type.
+   * @param $ids
+   *   The entity IDs
+   */
+  public static function copyEntity($entity, $ids) {
+    $entities = \Drupal::entityTypeManager()->getStorage($entity)->loadMultiple($ids);
+
+    foreach ($entities as $entity) {
+      $rethink = \Drupal::service('rethinkdb');
+      $document = RethinkDBReplica::getService()->EntityFlatter($entity);
+      $rethink->insert($entity->getEntityTypeId() . '_replica', $document);
+    }
   }
 
   /**

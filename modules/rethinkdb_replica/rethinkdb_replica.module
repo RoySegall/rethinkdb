@@ -16,7 +16,7 @@ function rethinkdb_replica_entity_insert(EntityInterface $entity) {
 
   /** @var RethinkDB $rethink */
   $rethink = \Drupal::service('rethinkdb');
-  RethinkDBReplica::getService()->EntityFlatter($entity);
+  $document = RethinkDBReplica::getService()->EntityFlatter($entity);
 
   \Drupal::moduleHandler()->alter('entity_flatter', $document, $entity);
 

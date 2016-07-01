@@ -52,7 +52,18 @@ class RethinkDBReplicaServices {
           $new_value = $field[0]['value'];
         }
         else {
-          $new_value = reset($field[0]);
+          if (is_array($field)) {
+            $new_value = reset($field);
+
+            if (count(array_keys($new_value)) === 1) {
+              // In case we have only one key in the field, i.e value, we will
+              // take it as the value.
+              $new_value = reset($new_value);
+            }
+          }
+          else {
+            $new_value = $field;
+          }
         }
       }
       else {
