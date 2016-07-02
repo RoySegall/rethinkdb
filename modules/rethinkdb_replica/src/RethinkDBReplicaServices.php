@@ -72,7 +72,7 @@ class RethinkDBReplicaServices {
         // case.
         $new_value = [];
         foreach ($field as $value) {
-          $new_value[] = reset($value);
+          $new_value[] = is_array($value) ? reset($value) : $value;
         }
       }
 

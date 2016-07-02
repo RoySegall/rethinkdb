@@ -32,11 +32,8 @@ Pusher app ID.
 
 Enable the Message example module - `drush en message_example -y`
 
-Go to `admin/configuration/rethinkdb/replica_manage` and:
-
-1. `Create table replica` for the Message entity.
-2. `Create replica table and clone entities`, the second option on the dropdown
- menu, for the Message type entity.
+Go to `admin/configuration/rethinkdb/replica_manage` and `Create table replica`
+for the Message entity.
 
 Watch the magic beings
 ===
