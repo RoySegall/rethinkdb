@@ -4,7 +4,7 @@ rethinkdb_websocket.rethink_db_message_LiveChat:
     _controller: '\Drupal\rethinkdb_websocket\Controller\RethinkDBMessage::LiveChat'
     _title: 'Activity stream'
   requirements:
-    _permission: 'access content'
+    _permission: 'access rethinkdb websocket'
 
 rethinkdb_websocket.rethinkdb_webscoket:
   path: '/admin/config/rethinkdb_websocket/rethinkdbwebsocket'
@@ -12,5 +12,4 @@ rethinkdb_websocket.rethinkdb_webscoket:
     _form: '\Drupal\rethinkdb_websocket\Form\RethinkDBWebsocket'
     _title: 'RethinkDBWebsocket'
   requirements:
-    _permission: 'access administration pages'
-
+    _permission: 'access rethinkdb websocket'

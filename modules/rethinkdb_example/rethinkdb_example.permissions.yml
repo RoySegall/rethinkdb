@@ -1,0 +1,3 @@
+access rethinkdb example:
+  title: 'Access RethinkDB example'
+  description: 'Allow to access routes defined by RethinkDB example module.'

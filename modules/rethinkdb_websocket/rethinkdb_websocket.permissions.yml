@@ -1,0 +1,3 @@
+access rethinkdb websocket:
+  title: 'Access RethinkDB websocket'
+  description: 'Allow to access routes defined by RethinkDB websocket module.'
