@@ -23,7 +23,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rethinkdb_replica', 'rethinkdb', 'entity_test', 'user'];
+  public static $modules = ['rethinkdb_replica', 'rethinkdb', 'entity_test', 'user', 'serialization'];
 
   /**
    * {@inheritdoc}
