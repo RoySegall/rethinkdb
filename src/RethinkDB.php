@@ -28,6 +28,15 @@ class RethinkDB {
   protected $settings;
 
   /**
+   * An alias to the RethinkDB service.
+   *
+   * @return RethinkDB
+   */
+  public static function getService() {
+    return \Drupal::service('rethinkdb');
+  }
+
+  /**
    * RethinkDB constructor.
    *
    * @param Settings $settings

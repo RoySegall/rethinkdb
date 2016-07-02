@@ -52,8 +52,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
 
     $primary_key = $entity_definition->getKey('id');
 
-    /** @var RethinkDB $rethink */
-    $rethink = \Drupal::service('rethinkdb');
+    $rethink = RethinkDb::getService();
     $replica_name = $entity->getEntityTypeId() . '_replica';
 
     $result = $rethink->getTable($replica_name)

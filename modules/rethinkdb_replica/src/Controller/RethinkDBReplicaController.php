@@ -128,9 +128,8 @@ class RethinkDBReplicaController extends ControllerBase {
     $entities = \Drupal::entityTypeManager()->getStorage($entity)->loadMultiple($ids);
 
     foreach ($entities as $entity) {
-      $rethink = \Drupal::service('rethinkdb');
       $document = RethinkDBReplica::getService()->EntityFlatter($entity);
-      $rethink->insert($entity->getEntityTypeId() . '_replica', $document);
+      RethinkDb::getService()->insert($entity->getEntityTypeId() . '_replica', $document);
     }
   }
 
