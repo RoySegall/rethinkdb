@@ -36,7 +36,7 @@ class RethinkDBReplicaController extends ControllerBase {
       if (in_array($entity_type_id, array_keys($replicas))) {
         $links = [
           'create_replica_and_clone' => [
-            'title' => $this->t('Create replica table and clone entities'),
+            'title' => $this->t('Clone entities'),
             'url' => Url::fromRoute('rethinkdb_replica.rethinkdb_replica_create_and_clone', $params),
           ],
         ];

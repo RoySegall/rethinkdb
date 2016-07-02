@@ -5,6 +5,7 @@ namespace Drupal\rethinkdb_replica;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\rethinkdb\RethinkDB;
+use Symfony\Component\Serializer\Serializer;
 
 class RethinkDBReplicaServices {
 
@@ -42,44 +43,19 @@ class RethinkDBReplicaServices {
    * @return array
    */
   public function EntityFlatter(EntityInterface $entity) {
-    $entity_array = $entity->toArray();
+    /** @var Serializer $serializer */
+    $serializer = \Drupal::service('serializer');
 
-    foreach ($entity_array as $key => $field) {
-      if (count($field) == 1) {
-        // Single field. Flatten the array.
-        if ($key == 'body') {
-          // This is a body field. No need for other values.
-          $new_value = $field[0]['value'];
-        }
-        else {
-          if (is_array($field)) {
-            $new_value = reset($field);
+    $normalize = $serializer->normalize($entity, 'json');
 
-            if (count(array_keys($new_value)) === 1) {
-              // In case we have only one key in the field, i.e value, we will
-              // take it as the value.
-              $new_value = reset($new_value);
-            }
-          }
-          else {
-            $new_value = $field;
-          }
-        }
+    foreach ($normalize as &$item) {
+      if (is_array($item)) {
+        $flatt_key = reset($item);
+        $item = is_array($flatt_key) ? reset($flatt_key) : $flatt_key;
       }
-      else {
-        // A field with multiple cardinality. Flat that array as well.
-        // No need for recursion since there is no more than two level in this
-        // case.
-        $new_value = [];
-        foreach ($field as $value) {
-          $new_value[] = is_array($value) ? reset($value) : $value;
-        }
-      }
-
-      $entity_array[$key] = $new_value;
     }
 
-    return $entity_array;
+    return $normalize;
   }
 
 }
