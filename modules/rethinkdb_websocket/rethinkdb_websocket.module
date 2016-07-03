@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Contains rethinkdb_websocket.module.
+ */
+
+use Drupal\message\Entity\Message;
+
+/**
+ * Implements hook_entity_flatter_alter().
+ */
+function rethinkdb_websocket_entity_flatter_alter(&$document, \Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() != 'message') {
+    return;
+  }
+
+  /** @var Message $message */
+  $message = $entity;
+  $document['message'] = $message->getText();
+}

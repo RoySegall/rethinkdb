@@ -1,0 +1,3 @@
+access rethinkdb replica:
+  title: 'Access RethinkDB replica'
+  description: 'Allow to access routes defined by RethinkDB replica module.'

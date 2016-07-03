@@ -23,7 +23,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rethinkdb_replica', 'rethinkdb', 'entity_test', 'user'];
+  public static $modules = ['rethinkdb_replica', 'rethinkdb', 'entity_test', 'user', 'serialization'];
 
   /**
    * {@inheritdoc}
@@ -31,13 +31,14 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
   public function setUp() {
     parent::setUp();
     $this->installEntitySchema('entity_test');
+    $this->installEntitySchema('user');
   }
 
   /**
    * Testing the workflow of replicating tables.
    */
   function testWorkflow() {
-    RethinkDBReplica::createReplica('entity_test');
+    RethinkDBReplica::getService()->createReplica('entity_test');
 
     // Creating an entity.
     $label = $this->randomString();
@@ -52,8 +53,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
 
     $primary_key = $entity_definition->getKey('id');
 
-    /** @var RethinkDB $rethink */
-    $rethink = \Drupal::service('rethinkdb');
+    $rethink = RethinkDb::getService();
     $replica_name = $entity->getEntityTypeId() . '_replica';
 
     $result = $rethink->getTable($replica_name)

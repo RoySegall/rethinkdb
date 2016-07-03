@@ -1,0 +1,22 @@
+{
+  "name": "rethinkdb_websocket",
+  "homepage": "https://github.com/RoySegall/rethinkdb",
+  "authors": [
+    "Roy Segall <roy.segall@gizra.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pusher-websocket-iso": "pusher#^3.1.0"
+  }
+}
