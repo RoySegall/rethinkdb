@@ -31,6 +31,7 @@ class ReplicaWorkflowTest extends RethinkTestsBase {
   public function setUp() {
     parent::setUp();
     $this->installEntitySchema('entity_test');
+    $this->installEntitySchema('user');
   }
 
   /**
