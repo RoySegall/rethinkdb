@@ -8,6 +8,7 @@ namespace Drupal\rethinkdb;
 
 use Drupal\Core\Site\Settings;
 use r\Connection;
+use r\Exceptions\RqlDriverError;
 use r\Queries\Dbs\Db;
 use r\Queries\Tables\Table;
 
@@ -54,7 +55,13 @@ class RethinkDB {
       'timeout' => NULL,
     ];
 
-    $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
+    try {
+      $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
+    } catch (RqlDriverError $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
+
     $this->setSettings($info);
   }
 
