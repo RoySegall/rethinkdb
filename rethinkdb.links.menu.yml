@@ -1,4 +1,3 @@
-# RethinkDB Config menu items definition
 entity.rethinkdb_config.collection:
   title: 'RethinkDB Config'
   route_name: entity.rethinkdb_config.collection
@@ -10,6 +9,12 @@ rethinkdb.rethinkdb_config:
   title: 'RethinkDB'
   route_name: rethinkdb.rethinkdb_config
   description: 'RethinkDB Settings'
-  parent: system.admin_config_system
-  weight: 99
+  parent: rethinkdb.admin_config
+  weight: -100
 
+rethinkdb.admin_config:
+  title: RethinkDB
+  route_name: rethinkdb.admin_config
+  parent: system.admin_config
+  description: 'Configure RethinkDB settiings.'
+  weight: -20

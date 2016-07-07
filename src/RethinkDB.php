@@ -132,6 +132,7 @@ class RethinkDB {
    * @return RethinkDB
    */
   public function createDb($db = NULL, $delete_if_exists = TRUE) {
+    return;
     if (!$db) {
       $db = $this->settings['database'];
     }

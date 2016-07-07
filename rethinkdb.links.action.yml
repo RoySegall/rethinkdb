@@ -1,6 +1,0 @@
-entity.rethinkdb_config.add_form:
-  route_name: 'entity.rethinkdb_config.add_form'
-  title: 'Add RethinkDB Config'
-  appears_on:
-    - entity.rethinkdb_config.collection
-
