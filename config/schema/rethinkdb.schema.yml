@@ -6,7 +6,7 @@ rethinkdb.database:
       type: string
       label: 'Host'
     port:
-      type: interger
+      type: integer
       label: 'Port'
     database:
       type: string

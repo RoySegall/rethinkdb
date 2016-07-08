@@ -32,7 +32,7 @@ abstract class RethinkTestsBase extends KernelTestBase {
     $config
       ->set('host','localhost')
       ->set('port', '28015')
-      ->set('db', 'drupal')
+      ->set('database', 'drupal')
       ->set('api_key', NULL)
       ->set('timeout', 30)
       ->save();
