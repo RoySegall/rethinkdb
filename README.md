@@ -27,7 +27,9 @@ You can have a look in the next example or in [RethinkDB example module](https:/
  *   label = @Translation("RethinkDB messages"),
  *   base_table = "rethinkdb_messages",
  *   translatable = FALSE,
- *   rethink = TRUE,
+ *   handlers = {
+ *     "storage" = "Drupal\rethinkdb\RethinkStorage"
+ *   },
  *   entity_keys = {}
  * )
  */
