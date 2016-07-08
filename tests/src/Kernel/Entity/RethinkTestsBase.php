@@ -28,15 +28,6 @@ abstract class RethinkTestsBase extends KernelTestBase {
     // Install config.
     $this->installConfig(['rethinkdb']);
 
-    $config = \Drupal::configFactory()->getEditable('rethinkdb.database');
-    $config
-      ->set('host','localhost')
-      ->set('port', '28015')
-      ->set('database', 'drupal')
-      ->set('api_key', NULL)
-      ->set('timeout', 30)
-      ->save();
-
     /** @var RethinkDB $rethinkdb */
     $rethinkdb = \Drupal::getContainer()->get('rethinkdb');
     $rethinkdb->createDb();
