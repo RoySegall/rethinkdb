@@ -8,17 +8,9 @@ your Drupal installation.
 
 ## Setting up
 1. install [RethinkDB](http://rethinkdb.com/docs/install)
-2. In the `settings.php` file add the RethinkDB connection credentials as listed
-below:
-```php
-<?php
+2. Enable the module.
 
-$settings['rethinkdb'] = array(
- 'database' => 'drupal8',
- 'host' => 'localhost',
-);
-
-```
+The connection settings to the DB can be changed at `admin/config/rethinkdb/rethinkdbconfig` 
 
 ## Writing you custom entity
 In order to define an entity based on RethinkDB storage you need to apply two

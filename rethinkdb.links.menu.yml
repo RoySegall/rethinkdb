@@ -1,0 +1,13 @@
+rethinkdb.rethinkdb_config:
+  title: 'RethinkDB'
+  route_name: rethinkdb.rethinkdb_config
+  description: 'RethinkDB Settings'
+  parent: rethinkdb.admin_config
+  weight: -100
+
+rethinkdb.admin_config:
+  title: RethinkDB
+  route_name: rethinkdb.admin_config
+  parent: system.admin_config
+  description: 'Configure RethinkDB settiings.'
+  weight: -20
