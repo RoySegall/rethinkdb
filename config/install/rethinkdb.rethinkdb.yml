@@ -2,11 +2,18 @@ rethinkdb:
   type: config_object
   label: 'RethinkDB Config config'
   mapping:
-    id:
+    host:
       type: string
-      label: 'ID'
-    label:
-      type: label
-      label: 'Label'
-    uuid:
+      label: 'Host'
+      default_value: 'localhist'
+    port:
+      type: interger
+      label: 'Port'
+      default_value: '28015'
+    database:
       type: string
+      label: 'Database'
+      default_value: 'drupal'
+    api_key:
+      type: string
+      label: 'API key'
