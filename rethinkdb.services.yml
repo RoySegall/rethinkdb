@@ -1,6 +1,6 @@
 services:
   rethinkdb:
     class: Drupal\rethinkdb\RethinkDB
-    arguments: ['@settings']
+    arguments: ['@config.factory']
   entity.query.rethink_db:
     class: Drupal\rethinkdb\Entity\QueryFactory

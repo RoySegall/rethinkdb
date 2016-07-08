@@ -4,8 +4,6 @@ namespace Drupal\rethinkdb\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use r\Exceptions\RqlDriverError;
-use r\Queries\Dbs\Db;
 
 /**
  * Class RethinkDBConfig.
@@ -64,6 +62,13 @@ class RethinkDBConfig extends ConfigFormBase {
       '#default_value' => $config->get('api_key'),
     ];
 
+    $form['timeout'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeout'),
+      '#description' => $this->t('Define the amount ot timeout in the connection'),
+      '#default_value' => $config->get('timeout'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -91,6 +96,7 @@ class RethinkDBConfig extends ConfigFormBase {
       ->set('port', $form_state->getValue('port'))
       ->set('db', $form_state->getValue('db'))
       ->set('api_key', $form_state->getValue('api_key'))
+      ->set('timeout', $form_state->getValue('timeout'))
       ->save();
   }
 
