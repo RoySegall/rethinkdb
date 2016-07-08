@@ -61,7 +61,6 @@ class RethinkDB {
       drupal_set_message($e->getMessage(), 'error');
     }
 
-
     $this->setSettings($info);
   }
 
