@@ -6,8 +6,10 @@
 
 namespace Drupal\rethinkdb;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Site\Settings;
 use r\Connection;
+use r\Exceptions\RqlDriverError;
 use r\Queries\Dbs\Db;
 use r\Queries\Tables\Table;
 
@@ -39,22 +41,20 @@ class RethinkDB {
   /**
    * RethinkDB constructor.
    *
-   * @param Settings $settings
-   *   The global object settings. Define the database connection in the
-   *   settings.php file.
+   * @param ConfigFactoryInterface $config_factory
    */
-  public function __construct(Settings $settings) {
-    $info = $settings->get('rethinkdb', []);
+  public function __construct(ConfigFactoryInterface $config_factory) {
 
-    $info += [
-      'host' => 'localhost',
-      'port' => '28015',
-      'database' => 'drupal',
-      'apiKey' => NULL,
-      'timeout' => NULL,
-    ];
+    $config = $config_factory->get('rethinkdb.database');
 
-    $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
+    $info = $config->getRawData();
+
+    try {
+      $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['api_key'], $info['timeout']));
+    } catch (RqlDriverError $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+
     $this->setSettings($info);
   }
 

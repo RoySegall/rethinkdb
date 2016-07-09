@@ -1,0 +1,17 @@
+rethinkdb.rethinkdb_config:
+  path: '/admin/config/rethinkdb/rethinkdbconfig'
+  defaults:
+    _form: '\Drupal\rethinkdb\Form\RethinkDBConfig'
+    _title: 'RethinkDBConfig'
+  requirements:
+    _permission: 'access rethinkdb admin pages'
+  options:
+    _admin_route: TRUE
+
+rethinkdb.admin_config:
+  path: '/admin/config/rethinkdb'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'RethinkDB'
+  requirements:
+    _permission: 'access rethinkdb admin pages'

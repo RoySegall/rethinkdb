@@ -21,7 +21,7 @@ class EntityCRUDTest extends RethinkTestsBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rethinkdb_example', 'rethinkdb'];
+  public static $modules = ['rethinkdb', 'rethinkdb_example'];
 
   function testTesting() {
     $message = RethinkMessages::create(['title' => $this->randomString(), 'body' => $this->randomString()]);
