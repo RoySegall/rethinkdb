@@ -2,20 +2,21 @@
 
 # RethinkDB for Drupal
 
-This is an ORM for RethinkDB. Which mean the module does not intend to replace
-the default DB drivers but to create entity representation of your RethinkDB in
-your Drupal installation.
+This is an ORM for RethinkDB. The module does not intend to replace
+the default DB drivers but to create entity representation in your RethinkDB of
+your Drupal installation entities.
 
 ## Setting up
 1. install [RethinkDB](http://rethinkdb.com/docs/install)
 2. Enable the module.
+3. Update Drupal autoloader using composer manager.
 
-The connection settings to the DB can be changed at `admin/config/rethinkdb/rethinkdbconfig` 
+The connection settings to the DB can be changed, and need to be changed in production, at `admin/config/rethinkdb/rethinkdbconfig` 
 
-## Writing you custom entity
+## Writing a custom entity
 In order to define an entity based on RethinkDB storage you need to apply two
 things:
-1. Add the ```rethink = TRUE``` settings in the annotatoin.
+1. The entity storage should be defined to ```Drupal\rethinkdb\RethinkStorage```.
 2. The entity class need to extends from `AbstractRethinkDbEntity`
 
 You can have a look in the next example or in [RethinkDB example module](https://github.com/RoySegall/rethinkdb/blob/8.x-1.x/modules/rethinkdb_example/src/Entity/RethinkMessages.php):
