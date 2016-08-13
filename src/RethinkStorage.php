@@ -8,6 +8,7 @@ namespace Drupal\rethinkdb;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -60,14 +61,6 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function create(array $values = array()) {
-    /** @var AbstractRethinkDbEntity $entity */
-    $entity = parent::create($values);
-    return $entity->setValues($values);
-  }
 
   /**
    * Get the base table easilly.
@@ -207,6 +200,12 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    *   The revision id.
    */
   public function deleteRevision($revision_id) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
   }
 
 }
