@@ -92,6 +92,7 @@ class Query extends QueryBase implements QueryInterface {
    */
   protected function addOrderBy() {
     foreach ($this->sort as $sort) {
+      $sort['field'] = empty($sort['field']) ? 'id' : $sort['field'];
       $sort_object = $sort['direction'] == 'ASC' ? \r\Asc($sort['field']) : \r\Desc($sort['field']);
       $this->table = $this->table->orderBy($sort_object);
     }

@@ -206,6 +206,7 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
    * {@inheritdoc}
    */
   protected function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
+    $entity->values = $values;
   }
 
 }
