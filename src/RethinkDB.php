@@ -103,6 +103,26 @@ class RethinkDB {
   }
 
   /**
+   * Validate the RethinkDB connection.
+   *
+   * @param $host
+   * @param $port
+   * @param $database
+   * @param $apiKey
+   * @param $timeout
+   *
+   * @return bool|\Exception
+   */
+  public function validateConnection($host, $port, $database, $apiKey, $timeout) {
+    try {
+      \r\connect($host, $port, $database, $apiKey, $timeout);
+      return TRUE;
+    } catch (\Exception $e) {
+      return $e;
+    }
+  }
+
+  /**
    * Get the DB object.
    *
    * @return Db

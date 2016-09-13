@@ -4,6 +4,7 @@ namespace Drupal\rethinkdb\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rethinkdb\RethinkDB;
 
 /**
  * Class RethinkDBConfig.
@@ -76,9 +77,8 @@ class RethinkDBConfig extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    try {
-      \r\connect($form_state->getValue('host'), $form_state->getValue('port'), $form_state->getValue('database'), $form_state->getValue('apiKey'), $form_state->getValue('timeout'));
-    } catch (\Exception $e) {
+
+    if (($e = RethinkDB::getService()->validateConnection($form_state->getValue('host'), $form_state->getValue('port'), $form_state->getValue('database'), $form_state->getValue('apiKey'), $form_state->getValue('timeout'))) instanceof \Exception) {
       $form_state->setErrorByName('host', $e->getMessage());
     }
 
