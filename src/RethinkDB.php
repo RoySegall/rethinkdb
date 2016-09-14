@@ -49,10 +49,12 @@ class RethinkDB {
 
     $info = $config->getRawData();
 
-    try {
-      $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['api_key'], $info['timeout']));
-    } catch (RqlDriverError $e) {
-      drupal_set_message($e->getMessage(), 'error');
+    if ($this->validateConnection($info['host'], $info['port'])) {
+      try {
+        $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['api_key'], $info['timeout']));
+      } catch (RqlDriverError $e) {
+        drupal_set_message($e->getMessage(), 'error');
+      }
     }
 
     $this->setSettings($info);
@@ -107,19 +109,11 @@ class RethinkDB {
    *
    * @param $host
    * @param $port
-   * @param $database
-   * @param $apiKey
-   * @param $timeout
    *
-   * @return bool|\Exception
+   * @return bool
    */
-  public function validateConnection($host, $port, $database, $apiKey, $timeout) {
-    try {
-      \r\connect($host, $port, $database, $apiKey, $timeout);
-      return TRUE;
-    } catch (\Exception $e) {
-      return $e;
-    }
+  public function validateConnection($host, $port) {
+    return @fsockopen($host, $port) !== FALSE;
   }
 
   /**
@@ -149,7 +143,7 @@ class RethinkDB {
       $db = $this->settings['database'];
     }
 
-    $list = \r\dbList()->run($this->getConnection());
+    $list = $this->dbList();
 
     if (in_array($this->settings['database'], $list)) {
       if ($delete_if_exists) {
@@ -163,6 +157,16 @@ class RethinkDB {
     \r\dbCreate($db)->run($this->getConnection());
 
     return $this;
+  }
+
+  /**
+   * Get a list of available DBs.
+   *
+   * @return array
+   *   List of all the DB installed on RethinkDB.
+   */
+  public function dbList() {
+    return \r\dbList()->run($this->getConnection());
   }
 
   /**
