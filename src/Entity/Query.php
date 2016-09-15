@@ -111,7 +111,7 @@ class Query extends QueryBase implements QueryInterface {
     $items = [];
     foreach ($this->table->run($rethinkdb->getConnection()) as $item) {
       $array_copy = $item->getArrayCopy();
-      $items[$array_copy['id']] = $array_copy;
+      $items[] = $array_copy['id'];
     }
 
     return $items;

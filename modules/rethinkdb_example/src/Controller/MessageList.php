@@ -23,15 +23,19 @@ class MessageList extends ControllerBase {
    *   Return Hello string.
    */
   public function MessageList() {
-    $messages = \Drupal::entityQuery('rethinkdb_message')
+    $mids = \Drupal::entityQuery('rethinkdb_message')
       ->execute();
+
+    $messages = \Drupal::entityTypeManager()
+      ->getStorage('rethinkdb_message')
+      ->loadMultiple($mids);
 
     $list = [];
     foreach($messages as $id => $message) {
       $list[] = $this->t('@id: @title - @body', [
-        '@id' => $message['id'],
-        '@title' => $message['title'],
-        '@body' => $message['body']
+        '@id' => $message->values['id'],
+        '@title' => $message->values['title'],
+        '@body' => $message->values['body'],
       ]);
     }
 
