@@ -93,15 +93,10 @@ class RethinkDBConfig extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $trigger = $form_state->getTriggeringElement();
-
-    if (!empty($trigger['#createdb'])) {
-
-      try {
-        \r\connect($form_state->getValue('host'), $form_state->getValue('port'), $form_state->getValue('database'), $form_state->getValue('apiKey'), $form_state->getValue('timeout'));
-      } catch (\Exception $e) {
-        $form_state->setErrorByName('host', $e->getMessage());
-      }
+    try {
+      \r\connect($form_state->getValue('host'), $form_state->getValue('port'), $form_state->getValue('database'), $form_state->getValue('apiKey'), $form_state->getValue('timeout'));
+    } catch (\Exception $e) {
+      $form_state->setErrorByName('host', $e->getMessage());
     }
 
     parent::validateForm($form, $form_state);

@@ -108,7 +108,9 @@ class RethinkDB {
    * Validate the RethinkDB connection.
    *
    * @param $host
+   *   The address of the RethinkDB.
    * @param $port
+   *   The port which we establish the connection.
    *
    * @return bool
    */
