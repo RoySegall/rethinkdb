@@ -110,9 +110,6 @@ You can apply all the operations you know: ``` =, !=, >, >=, <, <=, CONTAINS ```
       ->execute();
 ```
 
-__When executing the query, the query will return the objects and not the IDs of
- the matching documents.__
-
 ## Contribution
 
 Any PR is more than welcome. When creating the PR please ping me so I could know
