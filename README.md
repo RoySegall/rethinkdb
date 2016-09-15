@@ -10,8 +10,8 @@ your Drupal installation entities.
 1. install [RethinkDB](http://rethinkdb.com/docs/install)
 2. Enable the module.
 3. Update Drupal autoloader using composer manager.
-
-The connection settings to the DB can be changed, and need to be changed in production, at `admin/config/rethinkdb/rethinkdbconfig` 
+4. Go to `admin/config/rethinkdb/rethinkdbconfig` and make sure your connection
+setting are good to go.
 
 ## Writing a custom entity
 In order to define an entity based on RethinkDB storage you need to apply two

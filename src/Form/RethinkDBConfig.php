@@ -4,6 +4,7 @@ namespace Drupal\rethinkdb\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rethinkdb\RethinkDB;
 
 /**
  * Class RethinkDBConfig.
@@ -33,6 +34,18 @@ class RethinkDBConfig extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('rethinkdb.database');
+
+    $submit_disabled = FALSE;
+    if (!RethinkDB::getService()->validateConnection($config->get('host'), $config->get('port'))) {
+      $submit_disabled = TRUE;
+      drupal_set_message(t('Please check your RethinkDB DB is up and running. There is problem connecting to the DB'), 'error');
+    }
+    else {
+      if (!in_array($config->get('database'), RethinkDB::getService()->dbList())) {
+        $submit_disabled = TRUE;
+        drupal_set_message(t('The DB %name does not exists.', ['%name' => $config->get('database')]), 'error');
+      }
+    }
 
     $form['host'] = [
       '#type' => 'textfield',
@@ -69,7 +82,11 @@ class RethinkDBConfig extends ConfigFormBase {
       '#default_value' => $config->get('timeout'),
     ];
 
-    return parent::buildForm($form, $form_state);
+    $form = parent::buildForm($form, $form_state);
+
+    $form['actions']['submit']['#disabled'] = $submit_disabled;
+
+    return $form;
   }
 
   /**
@@ -94,7 +111,7 @@ class RethinkDBConfig extends ConfigFormBase {
     $this->config('rethinkdb.database')
       ->set('host', $form_state->getValue('host'))
       ->set('port', $form_state->getValue('port'))
-      ->set('db', $form_state->getValue('db'))
+      ->set('database', $form_state->getValue('database'))
       ->set('api_key', $form_state->getValue('api_key'))
       ->set('timeout', $form_state->getValue('timeout'))
       ->save();
