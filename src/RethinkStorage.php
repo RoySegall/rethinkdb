@@ -205,4 +205,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   public function deleteRevision($revision_id) {
   }
 
+  protected function invokeFieldMethod($method, ContentEntityInterface $entity) {
+    return [];
+  }
+
 }

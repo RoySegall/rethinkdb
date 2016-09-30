@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function rethinkdb_field_widget_info_alter(array &$info) {
+
+  $fields = [
+    'options_select',
+    'options_buttons',
+    'entity_reference_autocomplete',
+    'entity_reference_autocomplete_tags',
+  ];
+
+  foreach ($fields as $field) {
+    $info[$field]['field_types'][] = 'rethinkdb';
+
+  }
+}
+
+/**
+ * Perform alterations on Field API formatter types.
+ *
+ * @param array $info
+ *   An array of information on existing formatter types, as collected by the
+ *   annotation discovery mechanism.
+ */
+function rethinkdb_field_formatter_info_alter(array &$info) {
+  $fields = [
+    'entity_reference_entity_view',
+    'entity_reference_entity_id',
+    'entity_reference_label',
+  ];
+
+  foreach ($fields as $field) {
+    $info[$field]['field_types'][] = 'rethinkdb';
+
+  }
+}
