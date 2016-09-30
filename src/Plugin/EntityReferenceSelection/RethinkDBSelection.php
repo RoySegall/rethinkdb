@@ -28,7 +28,7 @@ class RethinkDBSelection extends DefaultSelection {
 
     $form['search_key'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Searchsss field'),
+      '#title' => $this->t('Search field'),
       '#description' => $this->t('The key on which the query will match the text to input of the user.'),
       '#default_value' => $field->getSetting('search_key'),
       '#required' => TRUE,
@@ -52,11 +52,16 @@ class RethinkDBSelection extends DefaultSelection {
       return array();
     }
 
+    $entries = \Drupal::entityTypeManager()
+      ->getStorage($this->configuration['target_type'])
+      ->loadMultiple($results);
+
     $handler_settings = $this->configuration['handler_settings'];
     $options = array();
 
-    foreach ($results as $result) {
-      $options[$this->configuration['target_type']][$result['id']] = Html::escape($result[$handler_settings['search_key']]);
+    foreach ($entries as $entry) {
+      $value = $entry->getValues();
+      $options[$this->configuration['target_type']][$value['id']] = Html::escape($value[$handler_settings['search_key']]);
     }
 
     return $options;
