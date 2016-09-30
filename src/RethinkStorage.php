@@ -61,17 +61,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function create(array $values = array()) {
-    /** @var AbstractRethinkDbEntity $entity */
-    $entity = parent::create($values);
-    return $entity->setValues($values);
-  }
-
   public function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
-    $entity->setValues($values);
+    $entity->values = $values;
   }
 
   /**

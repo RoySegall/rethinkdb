@@ -1,0 +1,3 @@
+access rethinkdb admin pages:
+  title: 'Access RethinkDB admin pages'
+  description: 'Grant access to RethinkDB admin pages'

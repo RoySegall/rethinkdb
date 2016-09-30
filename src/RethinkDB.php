@@ -6,8 +6,10 @@
 
 namespace Drupal\rethinkdb;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Site\Settings;
 use r\Connection;
+use r\Exceptions\RqlDriverError;
 use r\Queries\Dbs\Db;
 use r\Queries\Tables\Table;
 
@@ -28,22 +30,33 @@ class RethinkDB {
   protected $settings;
 
   /**
+   * An alias to the RethinkDB service.
+   *
+   * @return RethinkDB
+   */
+  public static function getService() {
+    return \Drupal::service('rethinkdb');
+  }
+
+  /**
    * RethinkDB constructor.
    *
-   * @param Settings $settings
-   *   The global object settings. Define the database connection in the
-   *   settings.php file.
+   * @param ConfigFactoryInterface $config_factory
    */
-  public function __construct(Settings $settings) {
-    $info = $settings->get('rethinkdb', [
-      'host' => 'localhost',
-      'port' => '28015',
-      'database' => 'drupal',
-      'apiKey' => NULL,
-      'timeout' => NULL,
-    ]);
+  public function __construct(ConfigFactoryInterface $config_factory) {
 
-    $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['apiKey'], $info['timeout']));
+    $config = $config_factory->get('rethinkdb.database');
+
+    $info = $config->getRawData();
+
+    if ($this->validateConnection($info['host'], $info['port'])) {
+      try {
+        $this->setConnection(\r\connect($info['host'], $info['port'], $info['database'], $info['api_key'], $info['timeout']));
+      } catch (RqlDriverError $e) {
+        drupal_set_message($e->getMessage(), 'error');
+      }
+    }
+
     $this->setSettings($info);
   }
 
@@ -92,6 +105,20 @@ class RethinkDB {
   }
 
   /**
+   * Validate the RethinkDB connection.
+   *
+   * @param $host
+   *   The address of the RethinkDB.
+   * @param $port
+   *   The port which we establish the connection.
+   *
+   * @return bool
+   */
+  public function validateConnection($host, $port) {
+    return @fsockopen($host, $port) !== FALSE;
+  }
+
+  /**
    * Get the DB object.
    *
    * @return Db
@@ -118,7 +145,7 @@ class RethinkDB {
       $db = $this->settings['database'];
     }
 
-    $list = \r\dbList()->run($this->getConnection());
+    $list = $this->dbList();
 
     if (in_array($this->settings['database'], $list)) {
       if ($delete_if_exists) {
@@ -132,6 +159,16 @@ class RethinkDB {
     \r\dbCreate($db)->run($this->getConnection());
 
     return $this;
+  }
+
+  /**
+   * Get a list of available DBs.
+   *
+   * @return array
+   *   List of all the DB installed on RethinkDB.
+   */
+  public function dbList() {
+    return \r\dbList()->run($this->getConnection());
   }
 
   /**

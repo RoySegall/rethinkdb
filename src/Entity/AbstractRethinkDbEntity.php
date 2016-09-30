@@ -18,22 +18,21 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 abstract class AbstractRethinkDbEntity extends ContentEntityBase {
 
+  public $values;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function ___construct(array $values, $entity_type, $bundle = FALSE, $translations = array()) {
+    parent::__construct($values, $entity_type, $bundle, $translations);
+    $this->values = $values;
+  }
+
   /**
    * @return array
    */
   public function getValues() {
     return $this->values;
-  }
-
-  /**
-   * @param array $dynamicFields
-   *
-   * @return $this
-   */
-  public function setValues($dynamicFields) {
-    $this->values = $dynamicFields;
-
-    return $this;
   }
 
   /**

@@ -15,7 +15,9 @@ use Drupal\rethinkdb\RethinkDB;
  *
  * @group rethinkdb_drupal
  */
-class RethinkTestsBase extends KernelTestBase {
+abstract class RethinkTestsBase extends KernelTestBase {
+
+  protected $table = [];
 
   /**
    * {@inheritdoc}
@@ -23,13 +25,17 @@ class RethinkTestsBase extends KernelTestBase {
   public function setUp() {
     parent::setUp();
 
+    // Install config.
+    $this->installConfig(['rethinkdb']);
+
     /** @var RethinkDB $rethinkdb */
     $rethinkdb = \Drupal::getContainer()->get('rethinkdb');
-
     $rethinkdb->createDb();
 
-    foreach ($this->tables as $table) {
-      $rethinkdb->tableCreate($table);
+    if ($this->tables) {
+      foreach ($this->tables as $table) {
+        $rethinkdb->tableCreate($table);
+      }
     }
   }
 

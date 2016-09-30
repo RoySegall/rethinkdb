@@ -1,0 +1,8 @@
+name: RethinkDB replica
+type: module
+description: Creating a replica of entities
+core: 8.x
+package: RethinkDB
+dependencies:
+  - rethinkdb
+  - serialization

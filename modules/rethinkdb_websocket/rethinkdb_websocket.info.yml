@@ -1,0 +1,9 @@
+name: RethinkDB WebSocket
+type: module
+description: Provide a websoket demo.
+core: 8.x
+package: RethinkDB
+dependencies:
+  - rethinkdb_replica
+  - message
+  - message_example

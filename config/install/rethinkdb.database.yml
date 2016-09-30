@@ -1,0 +1,5 @@
+host: localhost
+port: 28015
+database: drupal
+api_key: null
+timeout: 30

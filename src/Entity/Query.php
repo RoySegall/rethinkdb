@@ -7,7 +7,6 @@
 
 namespace Drupal\rethinkdb\Entity;
 
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Entity\Query\QueryBase;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\rethinkdb\RethinkDB;
@@ -100,6 +99,7 @@ class Query extends QueryBase implements QueryInterface {
    */
   protected function addOrderBy() {
     foreach ($this->sort as $sort) {
+      $sort['field'] = empty($sort['field']) ? 'id' : $sort['field'];
       $sort_object = $sort['direction'] == 'ASC' ? \r\Asc($sort['field']) : \r\Desc($sort['field']);
       $this->table = $this->table->orderBy($sort_object);
     }

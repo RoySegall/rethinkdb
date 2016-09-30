@@ -1,0 +1,6 @@
+rethinkdb_websocket.rethinkdb_webscoket:
+  title: 'RethinkDB websokcet'
+  parent: rethinkdb.admin_config
+  description: 'RethinkDB websocket settings'
+  route_name: rethinkdb_websocket.rethinkdb_webscoket
+  weight: -20

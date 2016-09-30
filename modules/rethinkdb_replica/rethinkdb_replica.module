@@ -1,0 +1,71 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\rethinkdb\RethinkDB;
+use Drupal\rethinkdb_replica\Entity\RethinkReplicaList;
+use Drupal\rethinkdb_replica\RethinkDBReplica;
+
+/**
+ * Implements hook_entity_insert().
+ */
+function rethinkdb_replica_entity_insert(EntityInterface $entity) {
+
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  $document = RethinkDBReplica::getService()->EntityFlatter($entity);
+
+  \Drupal::moduleHandler()->alter('entity_flatter', $document, $entity);
+
+  RethinkDb::getService()->insert($entity->getEntityTypeId() . '_replica', $document);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function rethinkdb_replica_entity_update(EntityInterface $entity) {
+
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  $primary_key = \Drupal::entityTypeManager()->getDefinition($entity->getEntityTypeId())->getKey('id');
+
+  $rethink = RethinkDb::getService();
+  $replica_name = $entity->getEntityTypeId() . '_replica';
+
+  $result = $rethink->getTable($replica_name)
+    ->filter(\r\row($primary_key)->eq($entity->id()))
+    ->run($rethink->getConnection());
+
+  $document = $result->current()->getArrayCopy();
+
+  $flatt = RethinkDBReplica::getService()->EntityFlatter($entity);
+  \Drupal::moduleHandler()->alter('entity_flatter', $document, $entity);
+
+  $rethink->getTable($replica_name)
+    ->get($document['id'])
+    ->update($flatt)
+    ->run($rethink->getConnection());
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function rethinkdb_replica_entity_delete(EntityInterface $entity) {
+
+  if (!RethinkReplicaList::load($entity->getEntityTypeId())) {
+    return;
+  }
+
+  $primary_key = \Drupal::entityTypeManager()->getDefinition($entity->getEntityTypeId())->getKey('id');
+
+  $rethink = RethinkDb::getService();
+  $replica_name = $entity->getEntityTypeId() . '_replica';
+
+  $rethink->getTable($replica_name)
+    ->filter(\r\row($primary_key)->eq($entity->id()))
+    ->delete()
+    ->run($rethink->getConnection());
+}

@@ -1,0 +1,23 @@
+rethinkdb_replica.rethinkdb_replica_list:
+  path: '/admin/configuration/rethinkdb/replica_manage'
+  defaults:
+    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplicaController::replicaList'
+    _title: 'Create replica'
+  requirements:
+    _permission: 'access rethinkdb replica'
+
+rethinkdb_replica.rethinkdb_replica_create:
+  path: '/admin/configuration/rethinkdb/replica_manage/{entity}'
+  defaults:
+    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplicaController::createReplica'
+    _title: 'Create replica'
+  requirements:
+    _permission: 'access rethinkdb replica'
+
+rethinkdb_replica.rethinkdb_replica_create_and_clone:
+  path: '/admin/configuration/rethinkdb/replica_manage_and_clone/{entity}'
+  defaults:
+    _controller: '\Drupal\rethinkdb_replica\Controller\RethinkDBReplicaController::createReplicaAndClone'
+    _title: 'Create replica and clone'
+  requirements:
+    _permission: 'access rethinkdb replica'

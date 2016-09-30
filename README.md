@@ -2,28 +2,21 @@
 
 # RethinkDB for Drupal
 
-This is an ORM for RethinkDB. Which mean the module does not intend to replace
-the default DB drivers but to create entity representation of your RethinkDB in
-your Drupal installation.
+This is an ORM for RethinkDB. The module does not intend to replace
+the default DB drivers but to create entity representation in your RethinkDB of
+your Drupal installation entities.
 
 ## Setting up
 1. install [RethinkDB](http://rethinkdb.com/docs/install)
-2. In the `settings.php` file add the RethinkDB connection credentials as listed
-below:
-```php
-<?php
+2. Enable the module.
+3. Update Drupal autoloader using composer manager.
+4. Go to `admin/config/rethinkdb/rethinkdbconfig` and make sure your connection
+setting are good to go.
 
-$settings['rethinkdb'] = array(
- 'database' => 'drupal8',
- 'host' => 'localhost',
-);
-
-```
-
-## Writing you custom entity
+## Writing a custom entity
 In order to define an entity based on RethinkDB storage you need to apply two
 things:
-1. Add the ```rethink = TRUE``` settings in the annotatoin.
+1. The entity storage should be defined to ```Drupal\rethinkdb\RethinkStorage```.
 2. The entity class need to extends from `AbstractRethinkDbEntity`
 
 You can have a look in the next example or in [RethinkDB example module](https://github.com/RoySegall/rethinkdb/blob/8.x-1.x/modules/rethinkdb_example/src/Entity/RethinkMessages.php):
@@ -35,7 +28,9 @@ You can have a look in the next example or in [RethinkDB example module](https:/
  *   label = @Translation("RethinkDB messages"),
  *   base_table = "rethinkdb_messages",
  *   translatable = FALSE,
- *   rethink = TRUE,
+ *   handlers = {
+ *     "storage" = "Drupal\rethinkdb\RethinkStorage"
+ *   },
  *   entity_keys = {}
  * )
  */
@@ -114,9 +109,6 @@ You can apply all the operations you know: ``` =, !=, >, >=, <, <=, CONTAINS ```
       ->condition('title', 'fo', 'CONTAINS')
       ->execute();
 ```
-
-__When executing the query, the query will return the objects and not the IDs of
- the matching documents.__
 
 ## Contribution
 

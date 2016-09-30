@@ -44,7 +44,7 @@ class RethinkdbGenericItem extends EntityReferenceItem {
     $entity_types = \Drupal::entityTypeManager()->getDefinitions();
     $select = ['---' => $this->t('Select entity type')];
     foreach ($entity_types as $entity_type) {
-      if ($entity_type->get('rethink')) {
+      if ($entity_type->get('reference_handler') == 'rethinkdb') {
         $select[$entity_type->id()] = $entity_type->getLabel();
       }
     }
