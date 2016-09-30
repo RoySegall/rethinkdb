@@ -32,6 +32,7 @@ function rethinkdb_field_formatter_info_alter(array &$info) {
     'entity_reference_label',
   ];
 
+  // todo: create custom formatters.
   foreach ($fields as $field) {
     $info[$field]['field_types'][] = 'rethinkdb';
 
