@@ -8,7 +8,7 @@ use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'selection' entity_reference.
+ * Plugin implementation of the 'selection' entity_reference for RethinkDB.
  *
  * @EntityReferenceSelection(
  *   id = "rethinkdb",
@@ -69,8 +69,7 @@ class RethinkDBSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function countReferenceableEntities($match = NULL, $match_operator = 'CONTAINS') {
-    $query = $this->buildEntityQuery($match, $match_operator);
-    return $query
+    return $this->buildEntityQuery($match, $match_operator)
       ->count()
       ->execute();
   }
@@ -80,9 +79,9 @@ class RethinkDBSelection extends DefaultSelection {
    */
   public function validateReferenceableEntities(array $ids) {
     $result = array();
+
     if ($ids) {
-      $query = $this->buildEntityQuery();
-      $result = $query
+      return $this->buildEntityQuery()
         ->condition('id', reset($ids))
         ->execute();
     }

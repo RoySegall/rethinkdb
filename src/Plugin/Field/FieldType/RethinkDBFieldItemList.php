@@ -15,7 +15,6 @@ class RethinkDBFieldItemList extends EntityReferenceFieldItemList {
    */
   public function defaultValuesForm(array &$form, FormStateInterface $form_state) { }
 
-
   /**
    * {@inheritdoc}
    */
