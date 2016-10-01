@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @EntityReferenceSelection(
  *   id = "rethinkdb",
  *   label = @Translation("RethinkDB entities selection based"),
- *   group = "rethinkdb",
+ *   group = "rethinkdb"
  * )
  */
 class RethinkDBSelection extends DefaultSelection {
@@ -24,11 +24,12 @@ class RethinkDBSelection extends DefaultSelection {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = [];
 
+    $key = empty($this->configuration['handler_settings']['search_key']) ? '' : $this->configuration['handler_settings']['search_key'];
     $form['search_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Search field'),
       '#description' => $this->t('The key on which the query will match the text to input of the user.'),
-      '#default_value' => $this->configuration['handler_settings']['search_key'],
+      '#default_value' => $key,
       '#required' => TRUE,
     ];
 
