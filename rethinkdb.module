@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function rethinkdb_field_widget_info_alter(array &$info) {
+
+  // Notify entity reference widget filed they apply to RethinkDB field as well.
+  $fields = [
+    'options_select',
+    'options_buttons',
+    'entity_reference_autocomplete',
+    'entity_reference_autocomplete_tags',
+  ];
+
+  foreach ($fields as $field) {
+    $info[$field]['field_types'][] = 'rethinkdb';
+  }
+}

@@ -7,6 +7,8 @@ namespace Drupal\rethinkdb\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Wrapping the base content entity class. This is used when we need to add
@@ -63,7 +65,13 @@ abstract class AbstractRethinkDbEntity extends ContentEntityBase {
   }
 
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    return [];
+    $fields = [];
+    $fields[$entity_type->getKey('id')] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('ID'))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    return $fields;
   }
 
 }

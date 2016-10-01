@@ -16,6 +16,9 @@ use Drupal\rethinkdb_example\Entity\RethinkMessages;
  */
 class EntityCRUDTest extends RethinkTestsBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $tables = ['rethinkdb_messages'];
 
   /**
@@ -23,7 +26,10 @@ class EntityCRUDTest extends RethinkTestsBase {
    */
   public static $modules = ['rethinkdb', 'rethinkdb_example'];
 
-  function testTesting() {
+  /**
+   * Testing the basic CRUD operations.
+   */
+  function testCrud() {
     $message = RethinkMessages::create(['title' => $this->randomString(), 'body' => $this->randomString()]);
     // Save it to the DB.
     $results = $message->save();

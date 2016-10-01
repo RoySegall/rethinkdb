@@ -17,7 +17,12 @@ use Drupal\rethinkdb\RethinkDB;
  */
 abstract class RethinkTestsBase extends KernelTestBase {
 
-  protected $table = [];
+  /**
+   * List of tables to install.
+   *
+   * @var array
+   */
+  protected $tables = [];
 
   /**
    * {@inheritdoc}
