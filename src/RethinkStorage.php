@@ -15,7 +15,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
 use r\Queries\Tables\Table;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -61,6 +60,12 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
+    $entity->values = $values;
+  }
 
   /**
    * Get the base table easilly.
@@ -205,8 +210,8 @@ class RethinkStorage extends SqlContentEntityStorage implements EntityStorageInt
   /**
    * {@inheritdoc}
    */
-  protected function initFieldValues(ContentEntityInterface $entity, array $values = [], array $field_names = []) {
-    $entity->values = $values;
+  protected function invokeFieldMethod($method, ContentEntityInterface $entity) {
+    return [];
   }
 
 }

@@ -1,3 +1,31 @@
+field.storage_settings.rethinkdb:
+  type: mapping
+  label: 'RethinkDB reference storage settings'
+  mapping:
+    target_type:
+      type: string
+      label: 'Type of entity to reference'
+    handler:
+      type: string
+      label: 'Type of entity to reference'
+    handler_settings:
+      type: string
+      label: 'Type of entity to reference'
+
+field.field_settings.rethinkdb:
+  type: mapping
+  label: 'RethinkDB refernec field settings'
+  mapping:
+    handler:
+      type: string
+      label: 'Type of entity to reference'
+    handler_settings:
+      type: mapping
+      mapping:
+        search_key:
+          type: string
+          label: 'foo'
+
 rethinkdb.database:
   type: config_object
   label: 'RethinkDB Config config'

@@ -28,6 +28,7 @@ class Query extends QueryBase implements QueryInterface {
     '<' => 'lt',
     '<=' => 'le',
     'CONTAINS' => 'match',
+    'IN' => 'args',
   ];
 
   /**
@@ -65,7 +66,13 @@ class Query extends QueryBase implements QueryInterface {
         throw new RqlException("The operator {$operator} does not allowed. Only " . implode(', ', array_keys($this->operators)));
       }
 
-      $row = \r\row($condition['field'])->{$this->operators[$operator]}($condition['value']);
+      if ($operator == 'IN') {
+        $row = \r\args($condition['value']);
+      }
+      else {
+        $row = \r\row($condition['field'])->{$this->operators[$operator]}($condition['value']);
+      }
+
       $this->table = $this->table->filter($row);
     }
 
