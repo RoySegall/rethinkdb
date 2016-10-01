@@ -23,10 +23,7 @@ class RethinkSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-
-    $query = \Drupal::entityQuery($this->configuration['target_type']);
-
-    return $query;
+    return \Drupal::entityQuery($this->configuration['target_type']);
   }
 
 }

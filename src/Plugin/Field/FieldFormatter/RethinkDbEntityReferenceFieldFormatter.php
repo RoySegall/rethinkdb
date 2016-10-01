@@ -2,7 +2,6 @@
 
 namespace Drupal\rethinkdb\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;

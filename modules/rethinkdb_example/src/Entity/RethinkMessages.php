@@ -13,13 +13,14 @@ use Drupal\rethinkdb\Entity\AbstractRethinkDbEntity;
  *   id = "rethinkdb_message",
  *   label = @Translation("RethinkDB messages"),
  *   base_table = "rethinkdb_messages",
+ *   translatable = FALSE,
+ *   reference = "rethinkdb",
  *   entity_keys = {
  *    "id" = "id"
  *   },
  *   handlers = {
  *     "storage" = "Drupal\rethinkdb\RethinkStorage"
- *   },
- *   reference_handler = "rethinkdb"
+ *   }
  * )
  */
 class RethinkMessages extends AbstractRethinkDbEntity {

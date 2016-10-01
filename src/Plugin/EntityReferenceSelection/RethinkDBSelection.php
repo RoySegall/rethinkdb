@@ -24,13 +24,11 @@ class RethinkDBSelection extends DefaultSelection {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = [];
 
-    $field = $form_state->getFormObject()->getEntity();
-
     $form['search_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Search field'),
       '#description' => $this->t('The key on which the query will match the text to input of the user.'),
-      '#default_value' => $field->getSetting('search_key'),
+      '#default_value' => $this->configuration['handler_settings']['search_key'],
       '#required' => TRUE,
     ];
 
@@ -46,21 +44,21 @@ class RethinkDBSelection extends DefaultSelection {
       $query->range(0, $limit);
     }
 
-    $results = $query->execute();
+    $entity_ids = $query->execute();
 
-    if (empty($results)) {
+    if (empty($entity_ids)) {
       return array();
     }
 
-    $entries = \Drupal::entityTypeManager()
+    $entities = \Drupal::entityTypeManager()
       ->getStorage($this->configuration['target_type'])
-      ->loadMultiple($results);
+      ->loadMultiple($entity_ids);
 
     $handler_settings = $this->configuration['handler_settings'];
     $options = array();
 
-    foreach ($entries as $entry) {
-      $value = $entry->getValues();
+    foreach ($entities as $entity) {
+      $value = $entity->getValues();
       $options[$this->configuration['target_type']][$value['id']] = Html::escape($value[$handler_settings['search_key']]);
     }
 
