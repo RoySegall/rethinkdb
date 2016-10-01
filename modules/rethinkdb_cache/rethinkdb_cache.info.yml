@@ -1,0 +1,9 @@
+name: RethinkDB Cache
+description: Implements cache layer for performance.
+package: RethinkDB
+
+core: 8.x
+type: module
+
+dependencies:
+  - rethinkdb
