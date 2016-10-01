@@ -11,6 +11,8 @@ use Drupal\rethinkdb\RethinkDB;
  */
 class RethinkDBCache implements CacheBackendInterface {
 
+  const TABLE = 'cache';
+
   /**
    * Get the cache service.
    *
@@ -27,6 +29,13 @@ class RethinkDBCache implements CacheBackendInterface {
   protected $rethinkdb;
 
   /**
+   * The table object.
+   *
+   * @var \r\Queries\Tables\Table
+   */
+  protected $table;
+
+  /**
    * Constructing function.
    *
    * @param RethinkDB $rethinkdb
@@ -34,12 +43,25 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   function __construct(RethinkDB $rethinkdb) {
     $this->rethinkdb = $rethinkdb;
+    $this->table = $this->rethinkdb->getTable(RethinkDBCache::TABLE);
   }
 
   /**
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
+    // Query the DB for the cached data.
+    $row = \r\row('cid')->eq($cid);
+    $data = $this->table
+      ->filter($row)
+      ->run($this->rethinkdb->getConnection())
+      ->toArray();
+
+    if (!$data) {
+      return;
+    }
+
+    return $data[0];
   }
 
   /**
@@ -52,6 +74,19 @@ class RethinkDBCache implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function set($cid, $data, $expire = Cache::PERMANENT, array $tags = array()) {
+    $document = [
+      'cid' => $cid,
+      'data' => $data,
+      'expire' => $expire,
+      'tags' => $tags,
+    ];
+    if ($stored = $this->get($cid)) {
+      $query = $this->table->get($cid)->update($document);
+    }
+    else {
+      $query = $this->table->insert($document);
+    }
+    $query->run($this->rethinkdb->getConnection());
   }
 
   /**
