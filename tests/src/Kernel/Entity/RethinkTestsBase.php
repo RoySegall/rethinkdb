@@ -22,7 +22,7 @@ abstract class RethinkTestsBase extends KernelTestBase {
    *
    * @var array
    */
-  protected $table = [];
+  protected $tables = [];
 
   /**
    * {@inheritdoc}
