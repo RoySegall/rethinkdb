@@ -9,7 +9,7 @@ namespace Drupal\Tests\rethinkdb\Kernel\Entity;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\NodeType;
-use Drupal\simpletest\ContentTypeCreationTrait;
+use Drupal\rethinkdb_websocket\Controller\RethinkDBMessage;
 
 /**
  * Tests entity reference selection plugins.
@@ -34,6 +34,20 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
     'user',
     'system',
   ];
+
+  /**
+   * The selection handler.
+   *
+   * @var \Drupal\rethinkdb\Plugin\EntityReferenceSelection\RethinkDBSelection
+   */
+  protected $selectionHandler;
+
+  /**
+   * List of array.
+   *
+   * @var array
+   */
+  protected $titles = [];
 
   /**
    * {@inheritdoc}
@@ -61,14 +75,37 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
       'rethinkdb',
       ['search_key' => 'title']
     );
+
+    $this->selectionHandler = \Drupal::service('plugin.manager.entity_reference_selection')->createInstance('rethinkdb', [
+      'handler' => 'rethink',
+      'target_type' => 'rethinkdb_message',
+      'handler_settings' => [
+        'search_key' => 'title',
+      ]
+    ]);
+
+    // Create two two entities.
+    $this->titles = [
+      $this->randomString(),
+      $this->randomString(),
+      $this->randomString(),
+    ];
+
+    foreach ($this->titles as $title) {
+      \Drupal::entityTypeManager()
+        ->getStorage('rethinkdb_message')
+        ->create(['title' => $title])
+        ->save();
+    }
   }
 
   /**
    * Verify we get form the selection handler the expected entities.
    */
   function testEntityReferenceField() {
-
-    $this->assertEquals(1,1);
+    // Verify we get nothing with a title that don't exist.
+    $results = $this->selectionHandler->getReferenceableEntities('foobar');
+    $this->assertEquals($results, []);
   }
 
   /**
