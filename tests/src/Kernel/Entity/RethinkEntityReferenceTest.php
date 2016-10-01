@@ -9,6 +9,7 @@ namespace Drupal\Tests\rethinkdb\Kernel\Entity;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\NodeType;
+use Drupal\simpletest\ContentTypeCreationTrait;
 
 /**
  * Tests entity reference selection plugins.
@@ -31,6 +32,7 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
     'node',
     'field',
     'user',
+    'system',
   ];
 
   /**
@@ -39,8 +41,15 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
   public function setUp() {
     parent::setUp();
 
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('user');
+    $this->installSchema('system', 'sequences');
+
     // Setting up the node type.
-    NodeType::create(['id' => 'page'])->save();
+    NodeType::create([
+      'type' => 'page',
+      'name' => $this->randomString()
+    ])->save();
 
     // Setting up an entity reference field.
     $this->createRethinkDBReferenceField(
@@ -59,7 +68,7 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
    */
   function testEntityReferenceField() {
 
-
+    $this->assertEquals(1,1);
   }
 
   /**
