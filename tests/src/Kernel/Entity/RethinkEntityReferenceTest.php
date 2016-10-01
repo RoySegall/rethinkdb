@@ -86,9 +86,9 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
 
     // Create two two entities.
     $this->titles = [
-      $this->randomString(),
-      $this->randomString(),
-      $this->randomString(),
+      'title 1',
+      'title 2',
+      'title 3',
     ];
 
     foreach ($this->titles as $title) {
@@ -106,6 +106,11 @@ class RethinkEntityReferenceTest extends RethinkTestsBase {
     // Verify we get nothing with a title that don't exist.
     $results = $this->selectionHandler->getReferenceableEntities('foobar');
     $this->assertEquals($results, []);
+
+    foreach ($this->titles as $delta => $title) {
+      $results = $this->selectionHandler->getReferenceableEntities($title);
+      $this->assertEquals(reset($results['rethinkdb_message']), $title);
+    }
   }
 
   /**
