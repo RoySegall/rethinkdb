@@ -66,4 +66,11 @@ class RethinkdbGenericItem extends EntityReferenceItem {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getValue() {
+    return $this->entity;
+  }
+
 }
