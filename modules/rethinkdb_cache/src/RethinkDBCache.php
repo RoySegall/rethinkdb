@@ -74,18 +74,25 @@ class RethinkDBCache implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function set($cid, $data, $expire = Cache::PERMANENT, array $tags = array()) {
-    $document = [
-      'cid' => $cid,
-      'data' => $data,
-      'expire' => $expire,
-      'tags' => $tags,
-    ];
+
     if ($stored = $this->get($cid)) {
-      $query = $this->table->get($cid)->update($document);
+      // We already have the cache bin. Update the current one.
+      $query = $this
+        ->table
+        ->get($stored['id'])
+        ->update(['data' => $data]);
     }
     else {
+      // This is a new bin. Creating a new one.
+      $document = [
+        'cid' => $cid,
+        'data' => $data,
+        'expire' => $expire,
+        'tags' => $tags,
+      ];
       $query = $this->table->insert($document);
     }
+
     $query->run($this->rethinkdb->getConnection());
   }
 
