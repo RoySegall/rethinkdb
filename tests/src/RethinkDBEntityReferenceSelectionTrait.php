@@ -1,7 +1,12 @@
 <?php
 
+namespace Drupal\Tests\rethinkdb;
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 trait RethinkDBEntityReferenceSelectionTrait {
+
   /**
    * Creates a field of RethinkDB entity reference field storage on the
    * specified bundle.
@@ -37,6 +42,9 @@ trait RethinkDBEntityReferenceSelectionTrait {
         'cardinality' => $cardinality,
         'settings' => array(
           'target_type' => $target_entity_type,
+          'form_display' => [
+            'type' => 'options_buttons',
+          ],
         ),
       ))->save();
     }
