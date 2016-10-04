@@ -197,6 +197,19 @@ class RethinkDB {
   }
 
   /**
+   * Remove the table from the DB.
+   *
+   * @param $table
+   *   The table name.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function tableDrop($table) {
+    return $this->getDb()->tableDrop($table)
+      ->run($this->getConnection());
+  }
+
+  /**
    * Insert a document into the DB.
    *
    * @param $table

@@ -12,7 +12,12 @@ use r\ValuedQuery\RVar;
  */
 class RethinkDBCache implements CacheBackendInterface {
 
-  const TABLE = 'cache';
+  /**
+   * The name of the table to hold the cache data.
+   *
+   * @var string
+   */
+  protected $table_name = 'cache';
 
   /**
    * Get the cache service.
@@ -37,6 +42,13 @@ class RethinkDBCache implements CacheBackendInterface {
   protected $table;
 
   /**
+   * The DB connection.
+   *
+   * @var \r\Connection
+   */
+  protected $connection;
+
+  /**
    * Constructing function.
    *
    * @param RethinkDB $rethinkdb
@@ -44,21 +56,16 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   function __construct(RethinkDB $rethinkdb) {
     $this->rethinkdb = $rethinkdb;
-    $this->table = $this->rethinkdb->getTable(RethinkDBCache::TABLE);
+    $this->table = $this->rethinkdb->getTable($this->table_name);
+    $this->connection = $this->rethinkdb->getConnection();
   }
 
   /**
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
-
     $cids = array($cid);
     $data = $this->getMultiple($cids, $allow_invalid);
-
-    if (!$data) {
-      return;
-    }
-
     return reset($data);
   }
 
@@ -70,7 +77,7 @@ class RethinkDBCache implements CacheBackendInterface {
       ->filter(function(RVar $doc) use ($cids) {
         return \r\expr($cids)->contains($doc->getField('cid'));
       })
-      ->run($this->rethinkdb->getConnection());
+      ->run($this->connection);
 
     $caches = [];
 
@@ -92,7 +99,11 @@ class RethinkDBCache implements CacheBackendInterface {
       $query = $this
         ->table
         ->get($stored->id)
-        ->update(['data' => $data]);
+        ->update([
+          'data' => $data,
+          'expire' => $expire,
+          'tags' => $tags,
+        ]);
     }
     else {
       // This is a new bin. Creating a new one.
@@ -105,60 +116,94 @@ class RethinkDBCache implements CacheBackendInterface {
       $query = $this->table->insert($document);
     }
 
-    $query->run($this->rethinkdb->getConnection());
+    $query->run($this->connection);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setMultiple(array $items) {
+    foreach ($items as $cid => $item) {
+      $this->set($cid, $item['data'], isset($item['expire']) ? $item['expire'] : CacheBackendInterface::CACHE_PERMANENT, isset($item['tags']) ? $item['tags'] : array());
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function delete($cid) {
+    $cids = [$cid];
+    $this->deleteMultiple($cids);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteMultiple(array $cids) {
+    $caches = $this->getMultiple($cids);
+    foreach ($caches as $cache) {
+      $this->table->get($cache->id)->delete()->run($this->connection);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteAll() {
+    $this->table->delete()->run($this->connection);
   }
 
   /**
    * {@inheritdoc}
    */
   public function invalidate($cid) {
+    $this->invalidateMultiple([$cid]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function invalidateMultiple(array $cids) {
+    $caches = $this->getMultiple($cids);
+    foreach ($caches as $cache) {
+      $this->set($cache->cid, $cache->data, REQUEST_TIME - 1);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function invalidateAll() {
+    $results = $this->table->run($this->connection)->toArray();
+
+    $cids = [];
+    foreach ($results as $result) {
+      $cids[] = $result['cid'];
+    }
+
+    $this->invalidateMultiple($cids);
   }
 
   /**
    * {@inheritdoc}
    */
   public function garbageCollection() {
+    $this->table->filter(function(RVar $doc) {
+      return $doc->getField('expire')->ne(Cache::PERMANENT)->rAnd($doc->getField('expire')->lt(REQUEST_TIME));
+    })->delete()->run($this->connection);
   }
 
   /**
    * {@inheritdoc}
    */
   public function removeBin() {
+    $this->rethinkdb->tableDrop($this->table_name);
+  }
+
+  /**
+   * RethinkDB cache layer add on - Creating the bin.
+   */
+  public function addBin() {
+    $this->rethinkdb->tableCreate($this->table_name);
   }
 }
