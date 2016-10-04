@@ -5,6 +5,7 @@ namespace Drupal\rethinkdb_cache;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\rethinkdb\RethinkDB;
+use r\ValuedQuery\RVar;
 
 /**
  * Implementing a cache layer based on RethinkDB storage.
@@ -50,24 +51,35 @@ class RethinkDBCache implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
-    // Query the DB for the cached data.
-    $row = \r\row('cid')->eq($cid);
-    $data = $this->table
-      ->filter($row)
-      ->run($this->rethinkdb->getConnection())
-      ->toArray();
+
+    $cids = array($cid);
+    $data = $this->getMultiple($cids, $allow_invalid);
 
     if (!$data) {
       return;
     }
 
-    return $data[0];
+    return reset($data);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
+    $documents = $this->table
+      ->filter(function(RVar $doc) use ($cids) {
+        return \r\expr($cids)->contains($doc->getField('cid'));
+      })
+      ->run($this->rethinkdb->getConnection());
+
+    $caches = [];
+
+    foreach ($documents as $document) {
+      $array_copy = $document->getArrayCopy();
+      $caches[$array_copy['cid']] = (object)$array_copy;
+    }
+
+    return $caches;
   }
 
   /**
@@ -79,7 +91,7 @@ class RethinkDBCache implements CacheBackendInterface {
       // We already have the cache bin. Update the current one.
       $query = $this
         ->table
-        ->get($stored['id'])
+        ->get($stored->id)
         ->update(['data' => $data]);
     }
     else {

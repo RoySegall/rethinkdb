@@ -7,11 +7,14 @@
 
 namespace Drupal\rethinkdb\Entity;
 
+use Dflydev\PlaceholderResolver\DataSource\ArrayDataSourceTest;
 use Drupal\Core\Entity\Query\QueryBase;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\rethinkdb\RethinkDB;
+use r\Datum\ArrayDatum;
 use r\Exceptions\RqlException;
 use r\Queries\Tables\Table;
+use r\ValuedQuery\RVar;
 
 class Query extends QueryBase implements QueryInterface {
 
@@ -67,12 +70,13 @@ class Query extends QueryBase implements QueryInterface {
       }
 
       if ($operator == 'IN') {
-        $row = \r\args($condition['value']);
+        $row = function(RVar $doc) use ($condition) {
+          return \r\expr($condition['value'])->contains($doc->getField($condition['field']));
+        };
       }
       else {
         $row = \r\row($condition['field'])->{$this->operators[$operator]}($condition['value']);
       }
-
       $this->table = $this->table->filter($row);
     }
 
