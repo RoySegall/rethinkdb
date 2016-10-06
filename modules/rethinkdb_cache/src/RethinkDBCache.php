@@ -4,6 +4,7 @@ namespace Drupal\rethinkdb_cache;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Cache\CacheTagsChecksumInterface;
 use Drupal\rethinkdb\RethinkDB;
 use r\ValuedQuery\RVar;
 
@@ -49,15 +50,25 @@ class RethinkDBCache implements CacheBackendInterface {
   protected $connection;
 
   /**
+   * The cache tags checksum provider.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsChecksumInterface
+   */
+  protected $checksumProvider;
+
+  /**
    * Constructing function.
    *
    * @param RethinkDB $rethinkdb
    *   RethinkDB service.
+   * @param \Drupal\Core\Cache\CacheTagsChecksumInterface $checksum_provider
+   *   The cache tags checksum provider.
    */
-  function __construct(RethinkDB $rethinkdb) {
+  function __construct(RethinkDB $rethinkdb, CacheTagsChecksumInterface $checksum_provider) {
     $this->rethinkdb = $rethinkdb;
     $this->table = $this->rethinkdb->getTable($this->table_name);
     $this->connection = $this->rethinkdb->getConnection();
+    $this->checksumProvider = $checksum_provider;
   }
 
   /**
@@ -83,10 +94,54 @@ class RethinkDBCache implements CacheBackendInterface {
 
     foreach ($documents as $document) {
       $array_copy = $document->getArrayCopy();
-      $caches[$array_copy['cid']] = (object)$array_copy;
+      $item = (object) $array_copy;
+
+      if (!$this->validItem($item, $allow_invalid)) {
+        continue;
+      }
+
+      $caches[$array_copy['cid']] = $item;
     }
 
     return $caches;
+  }
+
+  /**
+   * Verifying the cache item is valid.
+   *
+   * @param $document
+   *   The cache document.
+   * @param $allow_invalid
+   *   (optional) If TRUE, cache items may be returned even if they have expired
+   *   or been invalidated. Such items may sometimes be preferred, if the
+   *   alternative is recalculating the value stored in the cache, especially
+   *   if another concurrent thread is already recalculating the same value. The
+   *   "valid" property of the returned objects indicates whether the items are
+   *   valid or not. Defaults to FALSE.
+   *
+   * @return bool
+   */
+  protected function validItem($document, $allow_invalid = FALSE) {
+    if (!isset($document->data)) {
+      return FALSE;
+    }
+
+    $document->tags = $document->tags ? explode(' ', $document->tags) : array();
+
+    // Check expire time.
+    $document->valid = $document->expire == Cache::PERMANENT || $document->expire >= REQUEST_TIME;
+
+    // Check if invalidateTags() has been called with any of the items's tags.
+    if (!$this->checksumProvider->isValid($document->checksum, $document->tags)) {
+      // todo handle cache tags.
+      // $document->valid = FALSE;
+    }
+
+    if (!$allow_invalid && !$document->valid) {
+      return FALSE;
+    }
+
+    return $document;
   }
 
   /**
