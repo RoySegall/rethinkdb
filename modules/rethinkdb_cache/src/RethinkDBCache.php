@@ -126,15 +126,16 @@ class RethinkDBCache implements CacheBackendInterface {
       return FALSE;
     }
 
-    $document->tags = $document->tags ? explode(' ', $document->tags) : array();
+    if (!$document->tags) {
+      $document->tags = [];
+    }
 
     // Check expire time.
     $document->valid = $document->expire == Cache::PERMANENT || $document->expire >= REQUEST_TIME;
 
     // Check if invalidateTags() has been called with any of the items's tags.
     if (!$this->checksumProvider->isValid($document->checksum, $document->tags)) {
-      // todo handle cache tags.
-      // $document->valid = FALSE;
+       $document->valid = FALSE;
     }
 
     if (!$allow_invalid && !$document->valid) {
@@ -149,6 +150,8 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   public function set($cid, $data, $expire = Cache::PERMANENT, array $tags = array()) {
 
+    $checksum = $this->checksumProvider->getCurrentChecksum($tags);
+
     if ($stored = $this->get($cid)) {
       // We already have the cache bin. Update the current one.
       $query = $this
@@ -158,6 +161,7 @@ class RethinkDBCache implements CacheBackendInterface {
           'data' => $data,
           'expire' => $expire,
           'tags' => $tags,
+          'checksum' => $checksum,
         ]);
     }
     else {
@@ -167,6 +171,7 @@ class RethinkDBCache implements CacheBackendInterface {
         'data' => $data,
         'expire' => $expire,
         'tags' => $tags,
+        'checksum' => $checksum,
       ];
       $query = $this->table->insert($document);
     }
