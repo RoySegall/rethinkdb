@@ -85,9 +85,7 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
     $documents = $this->table
-      ->filter(function(RVar $doc) use ($cids) {
-        return \r\expr($cids)->contains($doc->getField('cid'));
-      })
+      ->getMultiple($cids, ['index' => 'cid'])
       ->run($this->connection);
 
     $caches = [];
