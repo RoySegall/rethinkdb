@@ -28,13 +28,19 @@ class AbTesting extends ControllerBase {
     $cache = $database == 'rethinkdb' ? \Drupal::service('rethinkdb_cache') : \Drupal::cache();
     $time_start = microtime(true);
 
-    for ($i = 0; $i <= 1000; $i++) {
-      if ($operation == 'write') {
-        $cache->set('testing' . 1, time());
+    if ($operation == 'write') {
+      for ($i = 0; $i <= 1000; $i++) {
+        $cache->set('testing' . $i, time());
       }
-      else {
-        $cache->get('testing' . 1, time());
+    }
+    else {
+      $cids = [];
+
+      for ($i = 0; $i <= 1000; $i++) {
+        $cids[] = 'testing' . $i;
       }
+
+      $cache->getMultiple($cids);
     }
 
     $time_end = microtime(true);
