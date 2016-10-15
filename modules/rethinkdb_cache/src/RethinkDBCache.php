@@ -88,17 +88,23 @@ class RethinkDBCache implements CacheBackendInterface {
       ->getMultiple($cids, ['index' => 'cid'])
       ->run($this->connection);
 
-    $caches = [];
-
+    // todo: find the fastest way to iterate over the items.
+    return;
     foreach ($documents as $document) {
-      $array_copy = $document->getArrayCopy();
-      $item = (object) $array_copy;
+      $new_docuemnt = (object) [
+        'cid' => $document->offsetGet('cid'),
+        'checksum' => $document->offsetGet('checksum'),
+        'data' => $document->offsetGet('data'),
+        'expire' => $document->offsetGet('expire'),
+        'id' => $document->offsetGet('id'),
+        'tags' => $document->offsetGet('tags'),
+      ];
 
-      if (!$this->validItem($item, $allow_invalid)) {
+      if (!$this->validItem($document, $allow_invalid)) {
         continue;
       }
 
-      $caches[$array_copy['cid']] = $item;
+      $caches[$new_docuemnt->cid] = $new_docuemnt;
     }
 
     return $caches;
