@@ -11,9 +11,14 @@
     "source": "http://cgit.drupalcode.org/rethinkdb"
   },
   "require": {
-    "danielmewes/php-rql": "^2.3"
+    "danielmewes/php-rql": "^2.3",
+    "cweagans/composer-patches": "~1.0"
   },
-  "config": {
-    "vendor-dir": "src/rethinkdb"
+  "extra": {
+    "patches": {
+      "danielmewes/php-rql": {
+        "Improving performance by preventing create cursor object": "https://patch-diff.githubusercontent.com/raw/danielmewes/php-rql/pull/145.patch"
+      }
+    }
   }
 }

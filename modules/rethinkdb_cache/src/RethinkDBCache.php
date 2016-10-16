@@ -86,25 +86,16 @@ class RethinkDBCache implements CacheBackendInterface {
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
     $documents = $this->table
       ->getMultiple($cids, ['index' => 'cid'])
-      ->run($this->connection);
+      ->run($this->connection, ['cursor' => TRUE]);
 
-    // todo: find the fastest way to iterate over the items.
-    return;
-    foreach ($documents as $document) {
-      $new_docuemnt = (object) [
-        'cid' => $document->offsetGet('cid'),
-        'checksum' => $document->offsetGet('checksum'),
-        'data' => $document->offsetGet('data'),
-        'expire' => $document->offsetGet('expire'),
-        'id' => $document->offsetGet('id'),
-        'tags' => $document->offsetGet('tags'),
-      ];
-
+    $caches = [];
+    while(list($key) = each($documents)) {
+      $document = $documents[$key];
       if (!$this->validItem($document, $allow_invalid)) {
         continue;
       }
 
-      $caches[$new_docuemnt->cid] = $new_docuemnt;
+      $caches[$document->cid] = $document;
     }
 
     return $caches;
@@ -138,6 +129,7 @@ class RethinkDBCache implements CacheBackendInterface {
     $document->valid = $document->expire == Cache::PERMANENT || $document->expire >= REQUEST_TIME;
 
     // Check if invalidateTags() has been called with any of the items's tags.
+    // todo: find a way to prevent from query the mysql DB.
     if (!$this->checksumProvider->isValid($document->checksum, $document->tags)) {
        $document->valid = FALSE;
     }
