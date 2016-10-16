@@ -210,6 +210,20 @@ class RethinkDB {
   }
 
   /**
+   * Creating an index in a table.
+   *
+   * @param $table
+   *   The table name.
+   * @param $key
+   *   The key for the new index.
+   *
+   * @return \r\Queries\Index\IndexCreate
+   */
+  public function createIndex($table, $key) {
+    return $this->getDb()->table($table)->indexCreate($key);
+  }
+
+  /**
    * Insert a document into the DB.
    *
    * @param $table

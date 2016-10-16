@@ -261,5 +261,6 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   public function addBin() {
     $this->rethinkdb->tableCreate($this->table_name);
+    $this->rethinkdb->createIndex($this->table_name, 'cid');
   }
 }
