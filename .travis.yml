@@ -25,6 +25,7 @@ before_script:
   - curl -sS https://getcomposer.org/installer | php
   - sudo mv composer.phar /usr/local/bin/composer
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer self-update
   - composer global require drush/drush:8.0.5
 
   # Remove Xdebug as we don't need it and it causes "PHP Fatal error: Maximum
@@ -34,6 +35,7 @@ before_script:
 
   # Remember the current directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
+  - composer install
 
   # Navigate out of module directory to prevent blown stack by recursive module
   # lookup.
@@ -49,11 +51,18 @@ before_script:
   - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://git.drupal.org/project/drupal.git
   - cd drupal
 
-  # Install Composer dependencies on 8.1.x.
-  - test ${DRUPAL_CORE} == "8.1.x" && composer self-update && composer install || true
+  # Install Composer dependencies.
+  - composer require danielmewes/php-rql
+  - composer install
 
   # Reference OG in the Drupal site.
   - ln -s $TESTDIR modules/rethinkdb
+  - cd modules/rethinkdb
+  - cp -R vendor/danielmewes/ ../../vendor/danielmewes
+  - rm -rf vendor
+  - cd -
+
+  # todo: clean after the patch will be applied.
 
   # Start a web server on port 8888 in the background.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
