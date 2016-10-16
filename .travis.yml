@@ -54,16 +54,10 @@ before_script:
   # Install Composer dependencies.
   - composer require danielmewes/php-rql
   - composer install
+  - cp -R $TESTDIR/vendor/danielmewes/ vendor/danielmewes
 
   # Reference OG in the Drupal site.
   - ln -s $TESTDIR modules/rethinkdb
-  - cd modules/rethinkdb
-  - composer install
-  - ls -al ../
-  - ls -al ../../
-  - cp -R vendor/danielmewes/ ../drupal/vendor/danielmewes
-  - rm -rf vendor
-  - cd -
 
   # todo: clean after the patch will be applied.
 
