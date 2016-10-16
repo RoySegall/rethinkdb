@@ -59,6 +59,7 @@ before_script:
   - ln -s $TESTDIR modules/rethinkdb
   - cd modules/rethinkdb
   - composer install
+  - ls -al
   - cp -R vendor/danielmewes/ ../../vendor/danielmewes
   - rm -rf vendor
   - cd -
