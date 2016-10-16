@@ -61,7 +61,7 @@ before_script:
   - composer install
   - ls -al ../
   - ls -al ../../
-  - cp -R vendor/danielmewes/ ../../vendor/danielmewes
+  - cp -R vendor/danielmewes/ ../drupal/vendor/danielmewes
   - rm -rf vendor
   - cd -
 
