@@ -7,11 +7,9 @@
 
 namespace Drupal\rethinkdb\Entity;
 
-use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\Query\ConditionBase;
 use Drupal\Core\Entity\Query\ConditionInterface;
 use Drupal\Core\Entity\Query\QueryException;
-use Drupal\mongodb\MongoCollectionFactory;
 
 class Condition extends ConditionBase {
 
