@@ -220,7 +220,7 @@ class RethinkDB {
    * @return \r\Queries\Index\IndexCreate
    */
   public function createIndex($table, $key) {
-    return $this->getDb()->table($table)->indexCreate($key);
+    return $this->getDb()->table($table)->indexCreate($key)->run($this->getConnection());
   }
 
   /**

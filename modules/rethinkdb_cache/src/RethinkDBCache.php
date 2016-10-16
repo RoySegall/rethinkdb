@@ -89,6 +89,11 @@ class RethinkDBCache implements CacheBackendInterface {
       ->run($this->connection, ['cursor' => TRUE]);
 
     $caches = [];
+
+    if (!is_array($documents)) {
+      return $caches;
+    }
+
     while(list($key) = each($documents)) {
       $document = $documents[$key];
       if (!$this->validItem($document, $allow_invalid)) {
