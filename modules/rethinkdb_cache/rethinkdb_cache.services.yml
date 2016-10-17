@@ -1,0 +1,4 @@
+services:
+  rethinkdb_cache:
+    class: Drupal\rethinkdb_cache\RethinkDBCache
+    arguments: ['@rethinkdb', '@cache_tags.invalidator.checksum']

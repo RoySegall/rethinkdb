@@ -1,0 +1,7 @@
+rethinkdb_cache.ab_testing_hello:
+  path: '/rethinkdb_cache/ab_testing/{database}/{operation}'
+  defaults:
+    _controller: '\Drupal\rethinkdb_cache\Controller\AbTesting::AbTestingController'
+    _title: 'AbTesting'
+  requirements:
+    _permission: 'access ab testing page'

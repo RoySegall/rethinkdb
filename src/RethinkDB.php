@@ -197,6 +197,33 @@ class RethinkDB {
   }
 
   /**
+   * Remove the table from the DB.
+   *
+   * @param $table
+   *   The table name.
+   *
+   * @return array|\ArrayObject|\DateTime|null|\r\Cursor
+   */
+  public function tableDrop($table) {
+    return $this->getDb()->tableDrop($table)
+      ->run($this->getConnection());
+  }
+
+  /**
+   * Creating an index in a table.
+   *
+   * @param $table
+   *   The table name.
+   * @param $key
+   *   The key for the new index.
+   *
+   * @return \r\Queries\Index\IndexCreate
+   */
+  public function createIndex($table, $key) {
+    return $this->getDb()->table($table)->indexCreate($key)->run($this->getConnection());
+  }
+
+  /**
    * Insert a document into the DB.
    *
    * @param $table

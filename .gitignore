@@ -1,3 +1,4 @@
 /modules/rethinkdb_websocket/bower_components
 /modules/rethinkdb_websocket/nodejs/node_modules
 /modules/rethinkdb_websocket/nodejs/pusher.json
+/rethinkdb_data/

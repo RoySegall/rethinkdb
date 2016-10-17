@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function rethinkdb_cache_install() {
+  // Creating the table to store the cache.
+  \Drupal\rethinkdb_cache\RethinkDBCache::getService()->addBin();
+}
