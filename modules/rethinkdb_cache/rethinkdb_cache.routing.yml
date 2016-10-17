@@ -4,4 +4,4 @@ rethinkdb_cache.ab_testing_hello:
     _controller: '\Drupal\rethinkdb_cache\Controller\AbTesting::AbTestingController'
     _title: 'AbTesting'
   requirements:
-    _permission: 'access content'
+    _permission: 'access ab testing page'
