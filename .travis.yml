@@ -54,7 +54,7 @@ before_script:
   # Install Composer dependencies.
   - composer require danielmewes/php-rql
   - composer install
-  - cp -R $TESTDIR/vendor/danielmewes/ vendor/danielmewes
+  - cp -R $TESTDIR/vendor vendor
 
   # Reference OG in the Drupal site.
   - ln -s $TESTDIR modules/rethinkdb
