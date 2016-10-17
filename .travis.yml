@@ -35,7 +35,6 @@ before_script:
 
   # Remember the current directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
-  - composer install
 
   # Navigate out of module directory to prevent blown stack by recursive module
   # lookup.
@@ -52,8 +51,8 @@ before_script:
   - cd drupal
 
   # Install Composer dependencies.
-  - composer require danielmewes/php-rql
   - composer install
+  - composer require danielmewes/php-rql
   # todo: clean after the patch will be applied.
   - rm -rf vendor/danielmewes/php-rql
   - git clone https://github.com/RoySegall/php-rql.git --depth 1 --branch 144 vendor/danielmewes/php-rql
