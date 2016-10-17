@@ -54,12 +54,12 @@ before_script:
   # Install Composer dependencies.
   - composer require danielmewes/php-rql
   - composer install
-  - cp -R $TESTDIR/vendor vendor
+  # todo: clean after the patch will be applied.
+  - rm -rf vendor/danielmewes/php-rql
+  - git clone git@github.com:RoySegall/php-rql.git --depth 1 --branch 144 vendor/danielmewes/php-rql
 
   # Reference OG in the Drupal site.
   - ln -s $TESTDIR modules/rethinkdb
-
-  # todo: clean after the patch will be applied.
 
   # Start a web server on port 8888 in the background.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
