@@ -2,3 +2,9 @@ services:
   rethinkdb_cache:
     class: Drupal\rethinkdb_cache\RethinkDBCache
     arguments: ['@rethinkdb', '@cache_tags.invalidator.checksum']
+  cache.backend.rethinkdb:
+    class: Drupal\rethinkdb_cache\Cache\RethinkDBCacheBackendFactory
+    arguments: ['@rethinkdb_cache', '@cache_tags.invalidator.checksum']
+  cache.backend.rethinkdb.entity:
+    class: Drupal\rethinkdb_cache\Cache\RethinkDBEntityCache
+    arguments: ['@rethinkdb_cache', '@cache_tags.invalidator.checksum']

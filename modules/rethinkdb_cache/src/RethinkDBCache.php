@@ -72,6 +72,30 @@ class RethinkDBCache implements CacheBackendInterface {
   }
 
   /**
+   * Get the table name.
+   *
+   * @return string
+   *   The table name.
+   */
+  public function getTableName() {
+    return $this->table_name;
+  }
+
+  /**
+   * Set the table name.
+   *
+   * @param string $table_name
+   *   The table name.
+   *
+   * @return \Drupal\rethinkdb_cache\RethinkDBCache
+   */
+  public function setTableName($table_name) {
+    $this->table_name = $table_name;
+    $this->table = $this->rethinkdb->getTable($this->table_name);
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
@@ -100,6 +124,7 @@ class RethinkDBCache implements CacheBackendInterface {
         continue;
       }
 
+      $document->data = unserialize($document->data);
       $caches[$document->cid] = $document;
     }
 
@@ -151,6 +176,8 @@ class RethinkDBCache implements CacheBackendInterface {
    */
   public function set($cid, $data, $expire = Cache::PERMANENT, array $tags = array()) {
 
+    $cid = str_replace(['"', '\\'], "_", $cid);
+    $data = serialize($data);
     $checksum = $this->checksumProvider->getCurrentChecksum($tags);
 
     if ($stored = $this->get($cid)) {
@@ -268,4 +295,5 @@ class RethinkDBCache implements CacheBackendInterface {
     $this->rethinkdb->tableCreate($this->table_name);
     $this->rethinkdb->createIndex($this->table_name, 'cid');
   }
+
 }
