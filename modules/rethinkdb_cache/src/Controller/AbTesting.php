@@ -34,13 +34,10 @@ class AbTesting extends ControllerBase {
       }
     }
     else {
-      $cids = [];
 
       for ($i = 0; $i <= 1000; $i++) {
-        $cids[] = 'testing' . $i;
+        $cache->get('testing' . $i);
       }
-
-      $cache->getMultiple($cids);
     }
 
     $time_end = microtime(true);

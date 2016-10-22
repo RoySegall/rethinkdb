@@ -99,9 +99,18 @@ class RethinkDBCache implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
-    $cids = array($cid);
-    $data = $this->getMultiple($cids, $allow_invalid);
-    return reset($data);
+    $data = &drupal_static('foo' . $cid);
+
+    if (!$data) {
+      $cids = array($cid);
+      $data = $this->getMultiple($cids, $allow_invalid);
+      $value = reset($data);
+      $data[$cid] = $value;
+      return $value;
+    }
+    else {
+      return $data;
+    }
   }
 
   /**
