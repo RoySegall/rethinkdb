@@ -117,9 +117,17 @@ class RethinkDBCache implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
-    $documents = $this->table
-      ->getMultiple($cids, ['index' => 'cid'])
-      ->run($this->connection, ['cursor' => TRUE]);
+
+    if (count($cids) === 1) {
+      $documents = $this->table
+        ->get(reset($cids))
+        ->run($this->connection, ['cursor' => TRUE]);
+    }
+    else {
+      $documents = $this->table
+        ->getMultiple($cids)
+        ->run($this->connection, ['cursor' => TRUE]);
+    }
 
     $caches = [];
 
@@ -204,6 +212,7 @@ class RethinkDBCache implements CacheBackendInterface {
     else {
       // This is a new bin. Creating a new one.
       $document = [
+        'id' => $cid,
         'cid' => $cid,
         'data' => $data,
         'expire' => $expire,
