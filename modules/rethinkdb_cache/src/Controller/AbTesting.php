@@ -23,25 +23,29 @@ class AbTesting extends ControllerBase {
    * @return string
    *   The amount of duration for the operation.
    */
-  public function AbTestingController($database, $operation) {
+  public function AbTestingController($database, $operation, $items) {
 
     $cache = $database == 'rethinkdb' ? \Drupal::service('rethinkdb_cache') : \Drupal::cache();
     $time_start = microtime(true);
 
     if ($operation == 'write') {
-      for ($i = 0; $i <= 1000; $i++) {
+      for ($i = 0; $i <= $items; $i++) {
         $cache->set('testing' . $i, time());
       }
     }
     else {
 
-      for ($i = 0; $i <= 1000; $i++) {
-        $cache->get('testing' . $i);
+      $caches = [];
+      for ($i = 0; $i <= $items; $i++) {
+        $caches[] = 'testing' . $i;
       }
+
+      $foo = $cache->getMultiple($caches);
     }
 
     $time_end = microtime(true);
     $time = $time_end - $time_start;
+    dpm(count($foo));
 
     $params = [
       '@time' => $time,

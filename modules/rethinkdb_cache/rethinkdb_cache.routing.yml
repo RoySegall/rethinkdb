@@ -1,5 +1,5 @@
 rethinkdb_cache.ab_testing_hello:
-  path: '/rethinkdb_cache/ab_testing/{database}/{operation}'
+  path: '/rethinkdb_cache/ab_testing/{database}/{operation}/{items}'
   defaults:
     _controller: '\Drupal\rethinkdb_cache\Controller\AbTesting::AbTestingController'
     _title: 'AbTesting'

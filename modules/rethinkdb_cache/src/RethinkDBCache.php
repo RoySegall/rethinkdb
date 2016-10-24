@@ -109,6 +109,7 @@ class RethinkDBCache implements CacheBackendInterface {
       return $value;
     }
     else {
+      dpm('a');
       return $data;
     }
   }
@@ -124,9 +125,20 @@ class RethinkDBCache implements CacheBackendInterface {
         ->run($this->connection, ['cursor' => TRUE]);
     }
     else {
+      $cursor = count($cids) < 2000;
+      $options = [];
+
+      if ($cursor) {
+        $options['cursor'] = TRUE;
+      }
+
       $documents = $this->table
         ->getMultiple($cids)
-        ->run($this->connection, ['cursor' => TRUE]);
+        ->run($this->connection, $options);
+
+      if (!$cursor) {
+        $documents = $documents->toArray();
+      }
     }
 
     $caches = [];
@@ -135,8 +147,11 @@ class RethinkDBCache implements CacheBackendInterface {
       return $caches;
     }
 
-    while(list($key) = each($documents)) {
-      $document = $documents[$key];
+    foreach ($documents as $document) {
+      if (!is_array($document)) {
+        $document = (object) $document->getArrayCopy();
+      }
+
       if (!$this->validItem($document, $allow_invalid)) {
         continue;
       }
