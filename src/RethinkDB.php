@@ -44,6 +44,9 @@ class RethinkDB {
    * @param ConfigFactoryInterface $config_factory
    */
   public function __construct(ConfigFactoryInterface $config_factory) {
+    if ($this->getConnection()) {
+      return;
+    }
 
     $config = $config_factory->get('rethinkdb.database');
 
